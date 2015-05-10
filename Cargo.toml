@@ -1,0 +1,16 @@
+[package]
+name = "rustjs"
+version = "0.1.0"
+authors = ["Yorkie Liu <yorkiefixer@gmail.com>"]
+
+[lib]
+name = "rustjs"
+path = "src/lib.rs"
+
+[dependencies]
+log = "0.3"
+
+[[bin]]
+name = "rustjs"
+test = false
+doc = false

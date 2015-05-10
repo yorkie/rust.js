@@ -8,7 +8,7 @@ use std::fmt;
 use std::mem;
 use std::ptr;
 
-#[link(name="v8")]
+#[link(name="v8", kind="static")]
 extern {
   fn _ZN2v82V810InitializeEv() -> bool;
   fn _ZN2v82V87DisposeEv() -> bool;

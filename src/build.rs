@@ -27,15 +27,15 @@
 //   $(MAKE) -f makefile.v8 -j $(NUM_JOBS) $(V8_TARGET) $(V8_FLAGS)
 //   ln -fs $(OUT_DIR)/$(V8_TARGET)/lib.target/libv8.so $@
 
-use std::env;
 use std::process::Command;
 
 fn main() {
-  Command::new("make")
-    .arg("-f")
-    .arg("makefile.cargo")
+  let output = Command::new("make")
+    .args(&["-f", "./deps/v8/Makefile"])
     .output()
     .unwrap_or_else(|e| {
       panic!("failed to execute process: {}", e) 
     });
+  println!("cargo:{:?}", output.stdout);
+
 }

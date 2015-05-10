@@ -1,6 +1,7 @@
-[package]
+[project]
 name = "rustjs"
 version = "0.1.0"
+license = "MIT"
 authors = ["Yorkie Liu <yorkiefixer@gmail.com>"]
 
 [lib]
@@ -8,7 +9,7 @@ name = "rustjs"
 path = "src/lib.rs"
 
 [dependencies]
-log = "0.3"
+env_logger = "0.3.0"
 
 [[bin]]
 name = "rustjs"

@@ -1,12 +1,9 @@
-#![cfg_attr(unix, feature(fs_ext))]
 
-#[macro_use]
-extern crate log
 extern crate env_logger;
 
-use std::io;
+use std::env;
 use std::fs;
-use std::process::Command;
+use std::io;
 
 const USAGE: &'static str = "
 Rust.js lets you:
@@ -27,5 +24,4 @@ Options:
 
 fn main() {
   env_logger::init().unwrap();
-  
 }

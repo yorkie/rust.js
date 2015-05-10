@@ -1,4 +1,0 @@
-[submodule "v8"]
-	path = deps/v8
-	url = git@github.com:v8/v8-git-mirror.git
-	branch = 4.4.62

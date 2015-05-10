@@ -1,9 +1,13 @@
+#[deny(unused)]
 
+// extern crate rustjs;
 extern crate env_logger;
 
 use std::env;
 use std::fs;
 use std::io;
+
+// use rustjs::V8;
 
 const USAGE: &'static str = "
 Rust.js lets you:

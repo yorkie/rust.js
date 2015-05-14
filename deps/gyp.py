@@ -4,14 +4,14 @@ import os
 import shlex
 import sys
 
-node_root = os.path.dirname(__file__)
-sys.path.insert(0, os.path.join(node_root, 'gyp', 'pylib'))
+script_dir = os.path.dirname(__file__)
+node_root  = os.path.normpath(os.path.join(script_dir, os.pardir))
+sys.path.insert(0, os.path.join(node_root, 'deps', 'gyp', 'pylib'))
 import gyp
 
 # Directory within which we want all generated files (including Makefiles)
 # to be written.
-output_dir = os.path.abspath(os.path.join(node_root, '../', 'out'))
-print output_dir
+output_dir = os.path.join(os.path.abspath(node_root), 'out')
 
 def run_gyp(args):
   rc = gyp.main(args)
@@ -26,11 +26,11 @@ if __name__ == '__main__':
   # On msvs it will crash if it gets an absolute path.
   # On Mac/make it will crash if it doesn't get an absolute path.
   if sys.platform == 'win32':
-    args.append(os.path.join(node_root, 'deps.gyp'))
+    args.append(os.path.join(node_root, 'rustjs.gyp'))
     common_fn  = os.path.join(node_root, 'common.gypi')
     options_fn = os.path.join(node_root, 'config.gypi')
   else:
-    args.append(os.path.join(os.path.abspath(node_root), 'deps.gyp'))
+    args.append(os.path.join(os.path.abspath(node_root), 'rustjs.gyp'))
     common_fn  = os.path.join(os.path.abspath(node_root), 'common.gypi')
     options_fn = os.path.join(os.path.abspath(node_root), 'config.gypi')
 

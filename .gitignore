@@ -4,6 +4,8 @@ Cargo.lock
 target/
 
 out/
+deps/*.pyc
+
 *.mk
 config.gypi
 icu_config.gypi

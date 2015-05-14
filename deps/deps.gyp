@@ -1,7 +1,7 @@
 {
   'targets': [
     {
-      'target_name': 'deps',
+      'target_name': 'rustjs_deps',
       'type': 'static_library',
       'dependencies': [
         'v8/tools/gyp/v8.gyp:v8',
@@ -11,7 +11,7 @@
         'v8' # include/v8_platform.h
       ],
       'sources': [
-        # TODO
+        'deps.h',
         # node.gyp is added to the project by default.
         'common.gypi',
       ]

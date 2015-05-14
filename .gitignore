@@ -3,7 +3,7 @@
 Cargo.lock
 target/
 
-deps/out/
-deps/*.mk
-deps/config.gypi
-deps/icu_config.gypi
+out/
+*.mk
+config.gypi
+icu_config.gypi

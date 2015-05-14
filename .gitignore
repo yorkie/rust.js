@@ -6,3 +6,4 @@ target/
 deps/out/
 deps/*.mk
 deps/config.gypi
+deps/icu_config.gypi

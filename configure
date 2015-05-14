@@ -765,7 +765,7 @@ def configure_intl(o):
   icu_config = {
     'variables': {}
   }
-  icu_config_name = 'icu_config.gypi'
+  icu_config_name = 'deps/icu_config.gypi'
   def write_config(data, name):
     return
 

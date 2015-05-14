@@ -2,3 +2,7 @@
 *.DS_Store
 Cargo.lock
 target/
+
+deps/out/
+deps/*.mk
+deps/config.gypi

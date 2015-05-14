@@ -4,10 +4,8 @@ import os
 import shlex
 import sys
 
-script_dir = os.path.dirname(__file__)
-node_root  = os.path.normpath(os.path.join(script_dir, os.pardir))
-
-sys.path.insert(0, os.path.join(node_root, 'tools', 'gyp', 'pylib'))
+node_root = os.path.dirname(__file__)
+sys.path.insert(0, os.path.join(node_root, 'gyp', 'pylib'))
 import gyp
 
 # Directory within which we want all generated files (including Makefiles)
@@ -27,11 +25,11 @@ if __name__ == '__main__':
   # On msvs it will crash if it gets an absolute path.
   # On Mac/make it will crash if it doesn't get an absolute path.
   if sys.platform == 'win32':
-    args.append(os.path.join(node_root, 'node.gyp'))
+    args.append(os.path.join(node_root, 'deps.gyp'))
     common_fn  = os.path.join(node_root, 'common.gypi')
     options_fn = os.path.join(node_root, 'config.gypi')
   else:
-    args.append(os.path.join(os.path.abspath(node_root), 'node.gyp'))
+    args.append(os.path.join(os.path.abspath(node_root), 'deps.gyp'))
     common_fn  = os.path.join(os.path.abspath(node_root), 'common.gypi')
     options_fn = os.path.join(os.path.abspath(node_root), 'config.gypi')
 

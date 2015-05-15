@@ -11,8 +11,8 @@
         'deps/v8' # include/v8_platform.h
       ],
       'sources': [
-        'deps/index.h',
-        # node.gyp is added to the project by default.
+        'deps/api.h',
+        'deps/api.cc',
         'common.gypi',
       ]
     }

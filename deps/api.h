@@ -1,13 +1,15 @@
-#include "v8.h"
+#ifndef RUSTJS_DEPS_C_API_H_
+#define RUSTJS_DEPS_C_API_H_
 
 #ifdef __cplusplus
-extern "C" {  // only need to export C interface if
-              // used by C++ source code
+extern "C" {
 #endif
 
-// __declspec( dllimport ) void MyCFunc();
-// __declspec( dllimport ) void AnotherCFunc();
+bool v8_initialize();
+
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

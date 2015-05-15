@@ -8,21 +8,25 @@ use std::fmt;
 use std::mem;
 use std::ptr;
 
-#[link(name="v8", kind="static")]
+#[link(name="rustjs_deps", kind="static")]
 extern {
-  fn _ZN2v82V810InitializeEv() -> bool;
-  fn _ZN2v82V87DisposeEv() -> bool;
+  fn v8_initialize() -> bool;
+}
+
+#[repr(C)]
+pub struct Isolate(*mut Isolate);
+
+impl Isolate {
+  pub fn Dispose(&mut self) {
+    // TODO
+  }
 }
 
 #[repr(C)]
 pub struct V8(*mut V8);
 
 impl V8 {
-    pub fn Initialize() -> bool {
-        unsafe { _ZN2v82V810InitializeEv() }
-    }
-
-    pub fn Dispose() -> bool {
-        unsafe { _ZN2v82V87DisposeEv() }
-    }
+  pub fn Initialize() -> bool {
+    unsafe { v8_initialize() }
+  }
 }

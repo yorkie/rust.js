@@ -38,13 +38,8 @@ extern "C" {
 static Platform* default_platform;
 static ArrayBufferAllocator array_buffer_allocator;
 
-int v8_runtime(char *data) {
-  default_platform = platform::CreateDefaultPlatform();
-  V8::InitializePlatform(default_platform);
-  V8::Initialize();
-  V8::SetArrayBufferAllocator(&ArrayBufferAllocator::the_singleton);
-
-  int code = 1;
+int32_t v8_runtime(char *data) {
+  int32_t code = 1;
   Isolate* isolate = Isolate::New();
   {
     Locker locker(isolate);
@@ -74,11 +69,21 @@ int v8_runtime(char *data) {
   }
   isolate->Dispose();
   isolate = nullptr;
+  return code;
+}
 
-  V8::Dispose();
+bool v8_free_platform() {
   delete default_platform;
   default_platform = nullptr;
-  return code;
+  return true;
+}
+
+bool v8_initialize_platform() {
+  if (default_platform == nullptr) {
+    default_platform = platform::CreateDefaultPlatform();
+    V8::InitializePlatform(default_platform);
+  }
+  return true;
 }
 
 bool v8_initialize() {
@@ -87,6 +92,19 @@ bool v8_initialize() {
 
 bool v8_dispose() {
   return V8::Dispose();
+}
+
+bool v8_set_array_buffer_allocator() {
+  V8::SetArrayBufferAllocator(&ArrayBufferAllocator::the_singleton);
+  return true;
+}
+
+Isolate *v8_isolate_new() {
+  return Isolate::New();
+}
+
+void v8_isolate_dispose(Isolate *isolate) {
+  isolate->Dispose();
 }
 
 bool v8_value_isArgumentsObject(void *data) {

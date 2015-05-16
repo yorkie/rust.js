@@ -28,11 +28,13 @@ $(RUSTJS_EXE): config.gypi target.deps/Makefile
 	$(MAKE) -C target.deps BUILDTYPE=Release V=$(V)
 	ln -f target.deps/Release/librustjs_deps.dylib /usr/local/lib/
 	$(CARGO) build
+	ln -f target/debug/rustjs /usr/local/bin/
 
 $(RUSTJS_G_EXE): deps/config.gypi deps/target.deps/Makefile
 	$(MAKE) -C target.deps BUILDTYPE=Debug V=$(V)
 	ln -f target.deps/Release/librustjs_deps.dylib /usr/local/lib/
 	$(CARGO) build
+	ln -f target/debug/rustjs /usr/local/bin/
 
 deps/target.deps/Makefile: deps/common.gypi deps/v8/build/toolchain.gypi deps/v8/build/features.gypi deps/v8/tools/gyp/v8.gyp deps/deps.gyp config.gypi
 	$(PYTHON) deps/deps.py -f make

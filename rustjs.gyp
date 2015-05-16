@@ -9,6 +9,7 @@
       ],
       'include_dirs': [
         'deps',
+        'deps/v8',
         'deps/v8/include',
       ],
       'sources': [

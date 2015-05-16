@@ -9,6 +9,7 @@ use std::mem;
 use std::ptr;
 
 extern {
+  fn v8_runtime() -> int;
   fn v8_initialize() -> bool;
   fn v8_dispose() -> bool;
 }
@@ -17,6 +18,9 @@ extern {
 pub struct V8(*mut V8);
 
 impl V8 {
+  pub fn Runtime() -> int {
+    unsafe { v8_runtime() }
+  }
   pub fn Initialize() -> bool {
     unsafe { v8_initialize() }
   }
@@ -24,3 +28,5 @@ impl V8 {
     unsafe { v8_dispose() }
   }
 }
+
+

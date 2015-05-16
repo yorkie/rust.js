@@ -29,5 +29,5 @@ Options:
 fn main() {
   println!("main function from rust");
   env_logger::init().unwrap();
-  V8::Initialize();
+  return V8::Runtime();
 }

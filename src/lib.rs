@@ -8,7 +8,6 @@ use std::fmt;
 use std::mem;
 use std::ptr;
 
-#[link(name="rustjs_deps", kind="static")]
 extern {
   fn v8_initialize() -> bool;
 }

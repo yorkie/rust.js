@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 bool v8_initialize();
-
+bool v8_dispose();
 
 #ifdef __cplusplus
 }

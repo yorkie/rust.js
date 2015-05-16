@@ -1,11 +1,14 @@
 
-*.DS_Store
-Cargo.lock
 target/
-
+target.deps/
 out/
 deps/*.pyc
 
 *.mk
+*.pyc
+*.DS_Store
+*.lock
+*.log
+
 config.gypi
 icu_config.gypi

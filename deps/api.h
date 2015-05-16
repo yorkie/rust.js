@@ -9,7 +9,7 @@ using namespace v8;
 extern "C" {
 #endif
 
-int v8_runtime();
+int v8_runtime(char *data);
 bool v8_initialize();
 bool v8_dispose();
 bool v8_value_isArgumentsObject(void *data);

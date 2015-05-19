@@ -9,6 +9,9 @@ using namespace v8;
 extern "C" {
 #endif
 
+#define FIXED_ONE_BYTE_STRING(isolate, string)\
+  (node::OneByteString((isolate), (string), sizeof(string) - 1))
+
 int32_t v8_runtime(char *data);
 bool v8_free_platform();
 bool v8_initialize_platform();

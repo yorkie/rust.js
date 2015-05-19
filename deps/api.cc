@@ -49,23 +49,25 @@ int32_t v8_runtime(char *data) {
   context = Context::New(isolate);
   Context::Scope context_scope(context);
 
-  int32_t code = 1;
-  Local<String> name = String::NewFromUtf8(isolate, "main");
-  Local<String> source = String::NewFromUtf8(isolate, data);
+  Local<FunctionTemplate> process_template = FunctionTemplate::New(isolate);
+  process_template->SetClassName(String::NewFromUtf8(isolate, "process"));
+  Local<Object> process_object = process_template->GetFunction()->NewInstance();
+  process_object->Set(String::NewFromUtf8(isolate, "version"), Boolean::New(isolate, true));
+  context->Global()->Set(String::NewFromUtf8(isolate, "process"), process_object);
 
-  ScriptOrigin origin(name);
-  Local<Script> script = Script::Compile(source, &origin);
+  int32_t code = 1;
+  Local<String> source = String::NewFromUtf8(isolate, data);
+  Local<Script> script = Script::Compile(source);
 
   if (script.IsEmpty()) {
     printf("empty script\n");
     assert(try_catch.HasCaught());
   } else {
-    Handle<Value> result = script->Run();
+    Local<Value> result = script->Run();
     if (result.IsEmpty()) {
       assert(try_catch.HasCaught());
       code = 2;
     }
-    printf("process exited normally\n");
   }
   return code;
 }

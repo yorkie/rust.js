@@ -32,6 +32,7 @@ void v8_context_new();
 void v8_context_enter();
 void v8_context_exit();
 void v8_context_global();
+void v8_context_scope(rust_callback callback);
 
 bool v8_value_isArgumentsObject(void *data);
 bool v8_value_isArray(void *data);

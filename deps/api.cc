@@ -150,6 +150,11 @@ void v8_context_global() {
   context->Global();
 }
 
+void v8_context_scope(rust_callback callback) {
+  Context::Scope context_scope(context);
+  callback();
+}
+
 bool v8_value_isArgumentsObject(void *data) {
   Value *instance = static_cast<Value *>(data);
   return instance->IsArgumentsObject();

@@ -18,9 +18,9 @@ extern {
 
   fn v8_locker_is_locked() -> bool;
   fn v8_locker_is_active() -> bool;
-  fn v8_locker(callback: extern fn());
+  fn v8_locker(closure: extern fn());
 
-  fn v8_handle_scope(callback: extern fn());
+  fn v8_handle_scope(closure: extern fn());
 
   fn v8_isolate_new();
   fn v8_isolate_dispose();
@@ -31,6 +31,7 @@ extern {
   fn v8_context_enter();
   fn v8_context_exit();
   fn v8_context_global();
+  fn v8_context_scope(closure: extern fn());
 
   fn v8_script_compile(isolate: Isolate, source: String) -> Script;
   fn v8_script_run(this: Script);
@@ -85,6 +86,11 @@ impl Context {
     unsafe { v8_context_global() }
   }
 }
+pub fn with_context_scope(closure: extern fn()) {
+  unsafe {
+    v8_context_scope(closure);
+  }
+}
 
 #[repr(C)]
 pub struct Script(*mut *mut Script);
@@ -102,12 +108,6 @@ impl Script {
 pub struct V8(*mut V8);
 impl V8 {
   pub fn Runtime(source: &[u8]) -> i32 {
-    let mut code :i32 = 1;
-    V8::InitializePlatform();
-    V8::Initialize();
-    V8::SetArrayBufferAllocator();
-    V8::NewIsolate();
-
     extern fn on_locked() {
       with_isolate_scope(&|| {
         with_handle_scope(on_handle_scoped);
@@ -116,10 +116,19 @@ impl V8 {
 
     extern fn on_handle_scoped() {
       Context::New();
+      with_context_scope(on_context_scoped);
     }
 
-    with_locker(on_locked);
+    extern fn on_context_scoped() {
+      println!("haha");
+    }
 
+    let mut code :i32 = 1;
+    V8::InitializePlatform();
+    V8::Initialize();
+    V8::SetArrayBufferAllocator();
+    V8::NewIsolate();
+    with_locker(on_locked);
     V8::DisposeIsolate();
     V8::Dispose();
     V8::UnInitializePlatform();

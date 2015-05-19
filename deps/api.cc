@@ -99,6 +99,24 @@ bool v8_set_array_buffer_allocator() {
   return true;
 }
 
+bool v8_locker_is_locked() {
+  return Locker::IsLocked(isolate);
+}
+
+bool v8_locker_is_active() {
+  return Locker::IsActive();
+}
+
+void v8_locker(rust_callback callback) {
+  Locker locker(isolate);
+  callback();
+}
+
+void v8_handle_scope(rust_callback callback) {
+  HandleScope handle_scope(isolate);
+  callback();
+}
+
 void v8_isolate_new() {
   isolate = Isolate::New();
 }
@@ -106,6 +124,30 @@ void v8_isolate_new() {
 void v8_isolate_dispose() {
   isolate->Dispose();
   isolate = nullptr;
+}
+
+void v8_isolate_enter() {
+  isolate->Enter();
+}
+
+void v8_isolate_exit() {
+  isolate->Exit();
+}
+
+void v8_context_new() {
+  context = Context::New(isolate);
+}
+
+void v8_context_enter() {
+  context->Enter();
+}
+
+void v8_context_exit() {
+  context->Exit();
+}
+
+void v8_context_global() {
+  context->Global();
 }
 
 bool v8_value_isArgumentsObject(void *data) {
@@ -118,24 +160,14 @@ bool v8_value_isArray(void *data) {
   return instance->IsArray();
 }
 
-bool v8_locker_is_locked(Isolate *isolate) {
-  return Locker::IsLocked(isolate);
-}
-
-bool v8_locker_is_active() {
-  return Locker::IsActive();
-}
-
-void v8_locker_initialize(Locker *locker, Isolate *isolate) {
-  Locker locker_(isolate);
-  locker = &locker_;
-}
-
 Local<Script> v8_script_compile(Isolate *isolate, char *data) {
   Local<String> source = String::NewFromUtf8(isolate, data);
   Local<Script> script = Script::Compile(source);
   return script;
 }
 
+void v8_script_run(Script *script) {
+  script->Run();
+}
 
 }

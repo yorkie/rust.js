@@ -15,12 +15,22 @@ extern {
   fn v8_initialize() -> bool;
   fn v8_dispose() -> bool;
   fn v8_set_array_buffer_allocator() -> bool;
+
+  fn v8_locker_is_locked() -> bool;
+  fn v8_locker_is_active() -> bool;
+  fn v8_locker(callback: extern fn());
+
+  fn v8_handle_scope(callback: extern fn());
+
   fn v8_isolate_new();
   fn v8_isolate_dispose();
+  fn v8_isolate_enter();
+  fn v8_isolate_exit();
 
-  fn v8_locker_is_locked(isolate: Isolate) -> bool;
-  fn v8_locker_is_active() -> bool;
-  fn v8_locker_initialize(this: &mut Locker, isolate: Isolate);
+  fn v8_context_new();
+  fn v8_context_enter();
+  fn v8_context_exit();
+  fn v8_context_global();
 
   fn v8_script_compile(isolate: Isolate, source: String) -> Script;
   fn v8_script_run(this: Script);
@@ -28,33 +38,56 @@ extern {
 
 #[repr(C)]
 pub struct Locker(*mut u8);
-
 impl Locker {
-  pub fn IsLocked(isolate: Isolate) -> bool {
-    unsafe { v8_locker_is_locked(isolate) }
+  pub fn IsLocked() -> bool {
+    unsafe { v8_locker_is_locked() }
   }
   pub fn IsActive() -> bool {
     unsafe { v8_locker_is_active() }
   }
 }
+pub fn with_locker(closure: extern fn()) {
+  unsafe {
+    v8_locker(closure);
+  }
+}
 
-pub fn with_locker<T>(isolate: Isolate, closure: fn() -> T) -> T {
-  let mut this = Locker(ptr::null_mut());
-  unsafe { v8_locker_initialize(&mut this, isolate) };
-  
-  let rval = closure();
-  rval
+#[repr(C)]
+struct HandleScope(*mut u8);
+pub fn with_handle_scope(closure: extern fn()) {
+  unsafe { 
+    v8_handle_scope(closure);
+  }
 }
 
 #[repr(C)]
 pub struct Isolate(*mut Isolate);
+pub fn with_isolate_scope<T>(closure: &Fn() -> T) -> T {
+  V8::EnterIsolate();
+  let rval = closure();
+  V8::ExitIsolate();
+  rval
+}
 
 #[repr(C)]
 pub struct Context(*mut Context);
+impl Context {
+  pub fn New() {
+    unsafe { v8_context_new() }
+  }
+  pub fn Enter() {
+    unsafe { v8_context_enter() }
+  }
+  pub fn Exit() {
+    unsafe { v8_context_exit() }
+  }
+  pub fn Global() {
+    unsafe { v8_context_global() }
+  }
+}
 
 #[repr(C)]
 pub struct Script(*mut *mut Script);
-
 impl Script {
   pub fn Compile(isolate: Isolate, data: String) -> Script {
     unsafe { v8_script_compile(isolate, data) }
@@ -67,7 +100,6 @@ impl Script {
 
 #[repr(C)]
 pub struct V8(*mut V8);
-
 impl V8 {
   pub fn Runtime(source: &[u8]) -> i32 {
     let mut code :i32 = 1;
@@ -75,9 +107,19 @@ impl V8 {
     V8::Initialize();
     V8::SetArrayBufferAllocator();
     V8::NewIsolate();
-    unsafe {
-      code = v8_runtime(source);
+
+    extern fn on_locked() {
+      with_isolate_scope(&|| {
+        with_handle_scope(on_handle_scoped);
+      });
     }
+
+    extern fn on_handle_scoped() {
+      Context::New();
+    }
+
+    with_locker(on_locked);
+
     V8::DisposeIsolate();
     V8::Dispose();
     V8::UnInitializePlatform();
@@ -103,5 +145,11 @@ impl V8 {
   }
   pub fn DisposeIsolate() {
     unsafe { v8_isolate_dispose() }
+  }
+  pub fn EnterIsolate() {
+    unsafe { v8_isolate_enter() }
+  }
+  pub fn ExitIsolate() {
+    unsafe { v8_isolate_exit() }
   }
 }

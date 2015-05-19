@@ -17,6 +17,30 @@ extern {
   fn v8_set_array_buffer_allocator() -> bool;
   fn v8_isolate_new();
   fn v8_isolate_dispose();
+
+  fn v8_locker_is_locked(isolate: Isolate) -> bool;
+  fn v8_locker_is_active() -> bool;
+  fn v8_locker_initialize(this: &mut Locker, isolate: Isolate);
+}
+
+#[repr(C)]
+pub struct Locker(*mut u8);
+
+impl Locker {
+  pub fn IsLocked(isolate: Isolate) -> bool {
+    unsafe { v8_locker_is_locked(isolate) }
+  }
+  pub fn IsActive() -> bool {
+    unsafe { v8_locker_is_active() }
+  }
+}
+
+pub fn with_locker<T>(isolate: Isolate, closure: fn() -> T) -> T {
+  let mut this = Locker(ptr::null_mut());
+  unsafe { v8_locker_initialize(&mut this, isolate) };
+  
+  let rval = closure();
+  rval
 }
 
 #[repr(C)]

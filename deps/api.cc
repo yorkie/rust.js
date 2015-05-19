@@ -118,4 +118,18 @@ bool v8_value_isArray(void *data) {
   return instance->IsArray();
 }
 
+bool v8_locker_is_locked(Isolate *isolate) {
+  return Locker::IsLocked(isolate);
+}
+
+bool v8_locker_is_active() {
+  return Locker::IsActive();
+}
+
+void v8_locker_initialize(Locker *locker, Isolate *isolate) {
+  Locker locker_(isolate);
+  locker = &locker_;
+}
+
+
 }

@@ -26,6 +26,10 @@ void v8_context_new();
 bool v8_value_isArgumentsObject(void *data);
 bool v8_value_isArray(void *data);
 
+bool v8_locker_is_locked(Isolate *isolate);
+bool v8_locker_is_active();
+void v8_locker_initialize(Locker *locker, Isolate *isolate);
+
 #ifdef __cplusplus
 }
 #endif

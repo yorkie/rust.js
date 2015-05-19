@@ -38,37 +38,35 @@ extern "C" {
 static Platform* default_platform;
 static ArrayBufferAllocator array_buffer_allocator;
 
+Isolate *isolate;
+TryCatch try_catch;
+Local<Context> context;
+
 int32_t v8_runtime(char *data) {
+  Locker locker(isolate);
+  Isolate::Scope isolate_scope(isolate);
+  HandleScope handle_scope(isolate);
+  context = Context::New(isolate);
+  Context::Scope context_scope(context);
+
   int32_t code = 1;
-  Isolate* isolate = Isolate::New();
-  {
-    Locker locker(isolate);
-    Isolate::Scope isolate_scope(isolate);
-    HandleScope handle_scope(isolate);
-    Local<Context> context = Context::New(isolate);
-    Context::Scope context_scope(context);
+  Local<String> name = String::NewFromUtf8(isolate, "main");
+  Local<String> source = String::NewFromUtf8(isolate, data);
 
-    TryCatch try_catch;
-    Local<String> name = String::NewFromUtf8(isolate, "main");
-    Local<String> source = String::NewFromUtf8(isolate, data);
+  ScriptOrigin origin(name);
+  Local<Script> script = Script::Compile(source, &origin);
 
-    ScriptOrigin origin(name);
-    Local<Script> script = Script::Compile(source, &origin);
-
-    if (script.IsEmpty()) {
-      printf("empty script\n");
+  if (script.IsEmpty()) {
+    printf("empty script\n");
+    assert(try_catch.HasCaught());
+  } else {
+    Handle<Value> result = script->Run();
+    if (result.IsEmpty()) {
       assert(try_catch.HasCaught());
-    } else {
-      Handle<Value> result = script->Run();
-      if (result.IsEmpty()) {
-        assert(try_catch.HasCaught());
-        code = 2;
-      }
-      printf("process exited normally\n");
+      code = 2;
     }
+    printf("process exited normally\n");
   }
-  isolate->Dispose();
-  isolate = nullptr;
   return code;
 }
 
@@ -99,12 +97,13 @@ bool v8_set_array_buffer_allocator() {
   return true;
 }
 
-Isolate *v8_isolate_new() {
-  return Isolate::New();
+void v8_isolate_new() {
+  isolate = Isolate::New();
 }
 
-void v8_isolate_dispose(Isolate *isolate) {
+void v8_isolate_dispose() {
   isolate->Dispose();
+  isolate = nullptr;
 }
 
 bool v8_value_isArgumentsObject(void *data) {

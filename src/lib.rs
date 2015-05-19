@@ -15,25 +15,15 @@ extern {
   fn v8_initialize() -> bool;
   fn v8_dispose() -> bool;
   fn v8_set_array_buffer_allocator() -> bool;
-  fn v8_isolate_new() -> Isolate;
-  fn v8_isolate_dispose(this: Isolate);
+  fn v8_isolate_new();
+  fn v8_isolate_dispose();
 }
 
 #[repr(C)]
 pub struct Isolate(*mut Isolate);
 
-impl Isolate {
-  pub fn Dispose(&mut self) {
-    // unsafe { v8_isolate_dispose(*self) }
-    *self = Isolate(ptr::null_mut());
-  }
-  pub fn New() -> Isolate {
-    unsafe { v8_isolate_new() }
-  }
-  fn raw_ptr(&self) -> *mut Isolate {
-    match *self { Isolate(that) => that }
-  }
-}
+#[repr(C)]
+pub struct Context(*mut Context);
 
 #[repr(C)]
 pub struct V8(*mut V8);
@@ -44,9 +34,11 @@ impl V8 {
     V8::InitializePlatform();
     V8::Initialize();
     V8::SetArrayBufferAllocator();
-    unsafe { 
+    V8::NewIsolate();
+    unsafe {
       code = v8_runtime(source);
     }
+    V8::DisposeIsolate();
     V8::Dispose();
     V8::UnInitializePlatform();
     return code;
@@ -65,5 +57,11 @@ impl V8 {
   }
   pub fn SetArrayBufferAllocator() -> bool {
     unsafe { v8_set_array_buffer_allocator() }
+  }
+  pub fn NewIsolate() {
+    unsafe { v8_isolate_new() }
+  }
+  pub fn DisposeIsolate() {
+    unsafe { v8_isolate_dispose() }
   }
 }

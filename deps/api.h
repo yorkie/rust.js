@@ -16,8 +16,9 @@ bool v8_initialize();
 bool v8_dispose();
 bool v8_set_array_buffer_allocator();
 
-Isolate *v8_isolate_new();
-void v8_isolate_dispose(Isolate *data);
+void v8_isolate_new();
+void v8_isolate_dispose();
+void v8_context_new();
 
 bool v8_value_isArgumentsObject(void *data);
 bool v8_value_isArray(void *data);

@@ -21,6 +21,9 @@ extern {
   fn v8_locker_is_locked(isolate: Isolate) -> bool;
   fn v8_locker_is_active() -> bool;
   fn v8_locker_initialize(this: &mut Locker, isolate: Isolate);
+
+  fn v8_script_compile(isolate: Isolate, source: String) -> Script;
+  fn v8_script_run(this: Script);
 }
 
 #[repr(C)]
@@ -48,6 +51,19 @@ pub struct Isolate(*mut Isolate);
 
 #[repr(C)]
 pub struct Context(*mut Context);
+
+#[repr(C)]
+pub struct Script(*mut *mut Script);
+
+impl Script {
+  pub fn Compile(isolate: Isolate, data: String) -> Script {
+    unsafe { v8_script_compile(isolate, data) }
+  }
+  pub fn Run(&mut self) {
+    // copy self
+    // unsafe { v8_script_run(*self) }
+  }
+}
 
 #[repr(C)]
 pub struct V8(*mut V8);

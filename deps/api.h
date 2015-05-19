@@ -30,6 +30,8 @@ bool v8_locker_is_locked(Isolate *isolate);
 bool v8_locker_is_active();
 void v8_locker_initialize(Locker *locker, Isolate *isolate);
 
+Local<Script> v8_script_compile(Isolate *isolate, char *data);
+
 #ifdef __cplusplus
 }
 #endif

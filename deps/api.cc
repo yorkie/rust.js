@@ -131,5 +131,11 @@ void v8_locker_initialize(Locker *locker, Isolate *isolate) {
   locker = &locker_;
 }
 
+Local<Script> v8_script_compile(Isolate *isolate, char *data) {
+  Local<String> source = String::NewFromUtf8(isolate, data);
+  Local<Script> script = Script::Compile(source);
+  return script;
+}
+
 
 }

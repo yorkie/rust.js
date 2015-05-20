@@ -1,13 +1,9 @@
-#[deny(unused)]
+#[warn(unused_must_use)]
 
 extern crate clap;
 
-use std::env;
-use std::io;
 use std::io::prelude::*;
-use std::fs;
 use std::fs::File;
-use std::path::Path;
 
 use self::clap::{Arg, App};
 

@@ -1,18 +1,11 @@
 #![allow(non_snake_case)]
-#![allow(non_uppercase_statics)]
 
 extern crate libc;
-
-use std::default::Default;
-use std::fmt;
-use std::mem;
-use std::ptr;
 
 pub use util::cmd::Commander;
 pub mod util;
 
 extern {
-  fn v8_runtime(source: &[u8]) -> i32;
   fn v8_free_platform() -> bool;
   fn v8_initialize_platform() -> bool;
   fn v8_initialize() -> bool;
@@ -40,6 +33,9 @@ extern {
   fn v8_script_run(this: &Script);
 
   fn v8_string_new_from_utf8(data: *const u8) -> String;
+  fn v8_function_tmpl_new() -> FunctionTemplate;
+  fn v8_function_tmpl_set_class_name(this: &FunctionTemplate, name: &[u8]);
+
 }
 
 #[repr(C)]
@@ -117,6 +113,17 @@ impl String {
 }
 
 #[repr(C)]
+pub struct FunctionTemplate(*mut *mut FunctionTemplate);
+impl FunctionTemplate {
+  pub fn New() -> FunctionTemplate {
+    unsafe { v8_function_tmpl_new() }
+  }
+  pub fn SetClassName(&self, name: &[u8]) {
+    unsafe { v8_function_tmpl_set_class_name(self, name) }
+  }
+}
+
+#[repr(C)]
 pub struct V8(*mut V8);
 impl V8 {
   pub fn Runtime() -> i32 {
@@ -130,13 +137,12 @@ impl V8 {
       with_context_scope(on_context_scoped);
     }
     extern fn on_context_scoped() {
-      let process_str = String::NewFromUtf8("process");
       let source = Commander::GetSource();
       let mut script = Script::Compile(source.as_bytes());
       script.Run();
     }
 
-    let mut code :i32 = 1;
+    let code :i32 = 1;
     V8::InitializePlatform();
     V8::Initialize();
     V8::SetArrayBufferAllocator();

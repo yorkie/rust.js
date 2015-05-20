@@ -1,9 +1,7 @@
-#[deny(unused)]
 
 extern crate rustjs;
 extern crate env_logger;
 
-use std::env;
 use rustjs::V8;
 
 fn main() {

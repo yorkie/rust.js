@@ -41,6 +41,8 @@ Local<Script> v8_script_compile(char *data);
 void v8_script_run(Script **script);
 
 Local<String> v8_string_new_from_utf8(char *data);
+Local<FunctionTemplate> v8_function_tmpl_new();
+void v8_function_tmpl_set_class_name(FunctionTemplate **ft, char *name);
 
 #ifdef __cplusplus
 }

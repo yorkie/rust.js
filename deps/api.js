@@ -1,7 +1,0 @@
-(function (process) {
-
-  'use strict';
-
-  
-
-});

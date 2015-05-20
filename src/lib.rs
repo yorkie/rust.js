@@ -2,6 +2,8 @@
 
 extern crate libc;
 
+use std::mem;
+
 pub use util::cmd::Commander;
 pub mod util;
 
@@ -26,20 +28,61 @@ extern {
   fn v8_context_new();
   fn v8_context_enter();
   fn v8_context_exit();
-  fn v8_context_global();
+  fn v8_context_global() -> Object;
   fn v8_context_scope(closure: extern fn());
-  fn v8_context_global_set(key: &[u8], val: Object);
 
   fn v8_script_compile(source: &[u8]) -> Script;
   fn v8_script_run(this: &Script);
 
   fn v8_string_new_from_utf8(data: *const u8) -> String;
+  fn v8_string_empty(this: &String) -> String;
+
   fn v8_object_new() -> Object;
+  fn v8_object_get(this: &Object, key: Value) -> Value;
+  fn v8_object_set(this: &Object, key: Value, val: Value) -> bool;
+
   fn v8_function_tmpl_new() -> FunctionTemplate;
   fn v8_function_tmpl_set_class_name(this: &FunctionTemplate, name: &[u8]);
   fn v8_function_tmpl_new_instance(this: &FunctionTemplate) -> Object;
 
 }
+
+pub trait IndexT {
+  fn get(&self, object: &Object) -> Value;
+  fn set(&self, object: &Object, value: Value) -> bool;
+}
+
+pub trait ValueT : IndexT {
+  fn as_val(&self) -> Value;
+  fn from_val(value: Value) -> Self;
+}
+
+macro_rules! value_method(
+  ($ty:ident) => (
+    impl IndexT for $ty {
+      fn get(&self, object: &Object) -> Value {
+        unsafe { v8_object_get(object, self.as_val()) }
+      }
+      fn set(&self, object: &Object, value: Value) -> bool {
+        unsafe { v8_object_set(object, self.as_val(), value) }
+      }
+    }
+    impl ValueT for $ty {
+      #[inline(always)]
+      fn as_val(&self) -> Value {
+        Value(
+          unsafe { mem::transmute(self) }
+        )
+      }
+      #[inline(always)]
+      fn from_val(value: Value) -> $ty {
+        match value {
+          Value(that) => $ty(unsafe { mem::transmute(that) })
+        }
+      }
+    }
+  )
+);
 
 #[repr(C)]
 pub struct Locker(*mut u8);
@@ -86,11 +129,8 @@ impl Context {
   pub fn Exit() {
     unsafe { v8_context_exit() }
   }
-  pub fn Global() {
+  pub fn Global() -> Object {
     unsafe { v8_context_global() }
-  }
-  pub fn SetGlobal(key: &str, val: Object) {
-    unsafe { v8_context_global_set(key.as_bytes(), val) }
   }
 }
 pub fn with_context_scope(closure: extern fn()) {
@@ -105,24 +145,38 @@ impl Script {
   pub fn Compile(data: &[u8]) -> Script {
     unsafe { v8_script_compile(data) }
   }
-  pub fn Run(&mut self) {
+  pub fn Run(&self) {
     unsafe { v8_script_run(self) }
   }
 }
 
 #[repr(C)]
+pub struct Value(*mut *mut Value);
+value_method!(Value);
+
+#[repr(C)]
 pub struct String(*mut *mut String);
+value_method!(String);
+
 impl String {
   pub fn NewFromUtf8(data: &str) -> String {
     unsafe { v8_string_new_from_utf8(data.as_ptr()) }
+  }
+  pub fn Empty(&self) -> String {
+    unsafe { v8_string_empty(self) }
   }
 }
 
 #[repr(C)]
 pub struct Object(*mut *mut Object);
+value_method!(Object);
+
 impl Object {
   pub fn New() -> Object {
     unsafe { v8_object_new() }
+  }
+  pub fn Set<K: IndexT, V: ValueT>(&self, key: K, value: V) -> bool {
+    key.set(self, value.as_val())
   }
 }
 
@@ -154,10 +208,9 @@ impl V8 {
       with_context_scope(on_context_scoped);
     }
     extern fn on_context_scoped() {
-      let process_tmpl = FunctionTemplate::New();
-      process_tmpl.SetClassName("process".as_bytes());
-      let process_obj = process_tmpl.NewInstance();
-      Context::SetGlobal("process", process_obj);
+      let mut process = String::NewFromUtf8("process_str");
+      process = process.Empty();
+      // Context::SetGlobal("process", process);
 
       let source = Commander::GetSource();
       let mut script = Script::Compile(source.as_bytes());

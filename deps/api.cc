@@ -125,8 +125,9 @@ void v8_context_scope(rust_callback callback) {
   callback();
 }
 
-void v8_context_global_set(char *key, Local<Value> *val) {
-  context->Global()->Set(String::NewFromUtf8(isolate, key), *val);
+void v8_context_global_set(char *key, Value *data) {
+  printf("global_set: %p %p\n", key, data);
+  // context->Global()->Set(String::NewFromUtf8(isolate, key), data);
 }
 
 bool v8_value_isArgumentsObject(void *data) {
@@ -153,6 +154,14 @@ Local<String> v8_string_new_from_utf8(char *data) {
   return String::NewFromUtf8(isolate, data);
 }
 
+Local<String> v8_string_empty(String **str) {
+  return (*str)->Empty(isolate);
+}
+
+Local<Object> v8_object_new() {
+  return Object::New(isolate);
+}
+
 Local<FunctionTemplate> v8_function_tmpl_new() {
   return FunctionTemplate::New(isolate);
 }
@@ -161,7 +170,7 @@ void v8_function_tmpl_set_class_name(FunctionTemplate **ft, char *name) {
   (*ft)->SetClassName(String::NewFromUtf8(isolate, name));
 }
 
-Local<Object> v8_function_tmpl_new_instance(FunctionTemplate **ft) {
+Handle<Object> v8_function_tmpl_new_instance(FunctionTemplate **ft) {
   return (*ft)->GetFunction()->NewInstance();
 }
 

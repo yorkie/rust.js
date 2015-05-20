@@ -38,8 +38,8 @@ extern {
   fn v8_string_empty(this: &String) -> String;
 
   fn v8_object_new() -> Object;
-  fn v8_object_get(this: &Object, key: Value) -> Value;
-  fn v8_object_set(this: &Object, key: Value, val: Value) -> bool;
+  fn v8_object_get(this: &Object, key: &Value) -> Value;
+  fn v8_object_set(this: &Object, key: &Value, val: &Value) -> bool;
 
   fn v8_function_tmpl_new() -> FunctionTemplate;
   fn v8_function_tmpl_set_class_name(this: &FunctionTemplate, name: &[u8]);
@@ -49,36 +49,30 @@ extern {
 
 pub trait IndexT {
   fn get(&self, object: &Object) -> Value;
-  fn set(&self, object: &Object, value: Value) -> bool;
+  fn set(&self, object: &Object, value: &Value) -> bool;
 }
 
-pub trait ValueT : IndexT {
-  fn as_val(&self) -> Value;
-  fn from_val(value: Value) -> Self;
+pub trait ValueT {
+  fn as_val(&self) -> &Value;
 }
 
 macro_rules! value_method(
   ($ty:ident) => (
     impl IndexT for $ty {
       fn get(&self, object: &Object) -> Value {
-        unsafe { v8_object_get(object, self.as_val()) }
+        unsafe { 
+          v8_object_get(object, self.as_val()) 
+        }
       }
-      fn set(&self, object: &Object, value: Value) -> bool {
-        unsafe { v8_object_set(object, self.as_val(), value) }
+      fn set(&self, object: &Object, value: &Value) -> bool {
+        unsafe { 
+          v8_object_set(object, self.as_val(), value)
+        }
       }
     }
     impl ValueT for $ty {
-      #[inline(always)]
-      fn as_val(&self) -> Value {
-        Value(
-          unsafe { mem::transmute(self) }
-        )
-      }
-      #[inline(always)]
-      fn from_val(value: Value) -> $ty {
-        match value {
-          Value(that) => $ty(unsafe { mem::transmute(that) })
-        }
+      fn as_val(&self) -> &Value {
+        unsafe { mem::transmute(self) }
       }
     }
   )
@@ -175,10 +169,10 @@ impl Object {
   pub fn New() -> Object {
     unsafe { v8_object_new() }
   }
-  pub fn Get<K: IndexT>(&self, key: K) -> Value {
+  pub fn Get<K:IndexT>(&self, key: K) -> Value {
     key.get(self)
   }
-  pub fn Set<K: IndexT, V: ValueT>(&self, key: K, value: V) -> bool {
+  pub fn Set<K:IndexT, V:ValueT>(&self, key: K, value: V) -> bool {
     key.set(self, value.as_val())
   }
 }
@@ -212,7 +206,8 @@ impl V8 {
     }
     extern fn on_context_scoped() {
       let mut process = String::NewFromUtf8("process_str");
-      Context::Global().Set(String::NewFromUtf8("process"), process);
+      let mut global = Context::Global();
+      global.Set(String::NewFromUtf8("process"), process);
 
       let source = Commander::GetSource();
       let mut script = Script::Compile(source.as_bytes());

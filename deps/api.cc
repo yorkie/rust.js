@@ -166,8 +166,8 @@ Local<Value> v8_object_get(Object **object, Local<Value> key) {
   return (*object)->Get(key);
 }
 
-bool v8_object_set(Object **object, Local<Value> key, Local<Value> val) {
-  return (*object)->Set(key, val);
+bool v8_object_set(Object **object, Local<Value> *key, Local<Value> *val) {
+  return (*object)->Set(*key, *val);
 }
 
 Local<FunctionTemplate> v8_function_tmpl_new() {

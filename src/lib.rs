@@ -175,6 +175,9 @@ impl Object {
   pub fn New() -> Object {
     unsafe { v8_object_new() }
   }
+  pub fn Get<K: IndexT>(&self, key: K) -> Value {
+    key.get(self)
+  }
   pub fn Set<K: IndexT, V: ValueT>(&self, key: K, value: V) -> bool {
     key.set(self, value.as_val())
   }
@@ -209,8 +212,7 @@ impl V8 {
     }
     extern fn on_context_scoped() {
       let mut process = String::NewFromUtf8("process_str");
-      process = process.Empty();
-      // Context::SetGlobal("process", process);
+      Context::Global().Set(String::NewFromUtf8("process"), process);
 
       let source = Commander::GetSource();
       let mut script = Script::Compile(source.as_bytes());

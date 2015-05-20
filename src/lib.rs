@@ -120,10 +120,6 @@ impl String {
 pub struct V8(*mut V8);
 impl V8 {
   pub fn Runtime() -> i32 {
-    let on_seed = || {
-
-    };
-
     extern fn on_locked() {
       with_isolate_scope(&|| {
         with_handle_scope(on_handle_scoped);

@@ -1,10 +1,7 @@
 #![allow(non_snake_case)]
 
 extern crate libc;
-
 use std::mem;
-use util::cmd::Commander;
-use builtin::process::SetupProcess;
 
 extern {
   fn v8_free_platform() -> bool;
@@ -193,37 +190,6 @@ impl FunctionTemplate {
 #[repr(C)]
 pub struct V8(*mut V8);
 impl V8 {
-  pub fn Runtime() -> i32 {
-    extern fn on_locked() {
-      with_isolate_scope(&|| {
-        with_handle_scope(on_handle_scoped);
-      });
-    }
-    extern fn on_handle_scoped() {
-      Context::New();
-      with_context_scope(on_context_scoped);
-    }
-    extern fn on_context_scoped() {
-      let mut process = Object::New();
-      let mut global = Context::Global();
-      global.Set(String::NewFromUtf8("process"), SetupProcess(process));
-
-      let source = Commander::GetSource();
-      let mut script = Script::Compile(source.as_bytes());
-      script.Run();
-    }
-
-    let code :i32 = 1;
-    V8::InitializePlatform();
-    V8::Initialize();
-    V8::SetArrayBufferAllocator();
-    V8::NewIsolate();
-    with_locker(on_locked);
-    V8::DisposeIsolate();
-    V8::Dispose();
-    V8::UnInitializePlatform();
-    return code;
-  }
   pub fn UnInitializePlatform() -> bool {
     unsafe { v8_free_platform() }
   }

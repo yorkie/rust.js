@@ -11,7 +11,6 @@ extern "C" {
 
 typedef void (*rust_callback)();
 
-int32_t v8_runtime(char *data);
 bool v8_free_platform();
 bool v8_initialize_platform();
 bool v8_initialize();

@@ -205,7 +205,7 @@ impl V8 {
       with_context_scope(on_context_scoped);
     }
     extern fn on_context_scoped() {
-      let mut process = String::NewFromUtf8("process_str");
+      let mut process = Object::New();
       let mut global = Context::Global();
       global.Set(String::NewFromUtf8("process"), process);
 

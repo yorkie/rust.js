@@ -155,9 +155,8 @@ void v8_context_scope(rust_callback callback) {
   callback();
 }
 
-void v8_global_set(char *key, void *data) {
-  Value *instance = static_cast<Value *>(data);
-  // context->Global()->Set(String::NewFromUtf8(isolate, key), val);
+void v8_context_global_set(char *key, Local<Value> *val) {
+  context->Global()->Set(String::NewFromUtf8(isolate, key), *val);
 }
 
 bool v8_value_isArgumentsObject(void *data) {
@@ -192,5 +191,8 @@ void v8_function_tmpl_set_class_name(FunctionTemplate **ft, char *name) {
   (*ft)->SetClassName(String::NewFromUtf8(isolate, name));
 }
 
+Local<Object> v8_function_tmpl_new_instance(FunctionTemplate **ft) {
+  return (*ft)->GetFunction()->NewInstance();
+}
 
 }

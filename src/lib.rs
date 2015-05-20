@@ -28,13 +28,16 @@ extern {
   fn v8_context_exit();
   fn v8_context_global();
   fn v8_context_scope(closure: extern fn());
+  fn v8_context_global_set(key: &[u8], val: Object);
 
   fn v8_script_compile(source: &[u8]) -> Script;
   fn v8_script_run(this: &Script);
 
   fn v8_string_new_from_utf8(data: *const u8) -> String;
+  fn v8_object_new() -> Object;
   fn v8_function_tmpl_new() -> FunctionTemplate;
   fn v8_function_tmpl_set_class_name(this: &FunctionTemplate, name: &[u8]);
+  fn v8_function_tmpl_new_instance(this: &FunctionTemplate) -> Object;
 
 }
 
@@ -86,6 +89,9 @@ impl Context {
   pub fn Global() {
     unsafe { v8_context_global() }
   }
+  pub fn SetGlobal(key: &str, val: Object) {
+    unsafe { v8_context_global_set(key.as_bytes(), val) }
+  }
 }
 pub fn with_context_scope(closure: extern fn()) {
   unsafe {
@@ -113,6 +119,14 @@ impl String {
 }
 
 #[repr(C)]
+pub struct Object(*mut *mut Object);
+impl Object {
+  pub fn New() -> Object {
+    unsafe { v8_object_new() }
+  }
+}
+
+#[repr(C)]
 pub struct FunctionTemplate(*mut *mut FunctionTemplate);
 impl FunctionTemplate {
   pub fn New() -> FunctionTemplate {
@@ -120,6 +134,9 @@ impl FunctionTemplate {
   }
   pub fn SetClassName(&self, name: &[u8]) {
     unsafe { v8_function_tmpl_set_class_name(self, name) }
+  }
+  pub fn NewInstance(&self) -> Object {
+    unsafe { v8_function_tmpl_new_instance(self) }
   }
 }
 
@@ -137,6 +154,11 @@ impl V8 {
       with_context_scope(on_context_scoped);
     }
     extern fn on_context_scoped() {
+      let process_tmpl = FunctionTemplate::New();
+      process_tmpl.SetClassName("process".as_bytes());
+      let process_obj = process_tmpl.NewInstance();
+      Context::SetGlobal("process", process_obj);
+
       let source = Commander::GetSource();
       let mut script = Script::Compile(source.as_bytes());
       script.Run();

@@ -37,9 +37,10 @@ void v8_context_scope(rust_callback callback);
 bool v8_value_isArgumentsObject(void *data);
 bool v8_value_isArray(void *data);
 
+Local<Script> v8_script_compile(char *data);
+void v8_script_run(Script **script);
 
-Local<Script> v8_script_compile(Isolate *isolate, char *data);
-void v8_script_run(Script *script);
+Local<String> v8_string_new_from_utf8(char *data);
 
 #ifdef __cplusplus
 }

@@ -8,6 +8,9 @@ use std::fmt;
 use std::mem;
 use std::ptr;
 
+pub use util::cmd::Commander;
+pub mod util;
+
 extern {
   fn v8_runtime(source: &[u8]) -> i32;
   fn v8_free_platform() -> bool;
@@ -33,8 +36,10 @@ extern {
   fn v8_context_global();
   fn v8_context_scope(closure: extern fn());
 
-  fn v8_script_compile(isolate: Isolate, source: String) -> Script;
-  fn v8_script_run(this: Script);
+  fn v8_script_compile(source: &[u8]) -> Script;
+  fn v8_script_run(this: &Script);
+
+  fn v8_string_new_from_utf8(data: *const u8) -> String;
 }
 
 #[repr(C)]
@@ -54,7 +59,7 @@ pub fn with_locker(closure: extern fn()) {
 }
 
 #[repr(C)]
-struct HandleScope(*mut u8);
+pub struct HandleScope(*mut u8);
 pub fn with_handle_scope(closure: extern fn()) {
   unsafe { 
     v8_handle_scope(closure);
@@ -95,32 +100,44 @@ pub fn with_context_scope(closure: extern fn()) {
 #[repr(C)]
 pub struct Script(*mut *mut Script);
 impl Script {
-  pub fn Compile(isolate: Isolate, data: String) -> Script {
-    unsafe { v8_script_compile(isolate, data) }
+  pub fn Compile(data: &[u8]) -> Script {
+    unsafe { v8_script_compile(data) }
   }
   pub fn Run(&mut self) {
-    // copy self
-    // unsafe { v8_script_run(*self) }
+    unsafe { v8_script_run(self) }
+  }
+}
+
+#[repr(C)]
+pub struct String(*mut *mut String);
+impl String {
+  pub fn NewFromUtf8(data: &str) -> String {
+    unsafe { v8_string_new_from_utf8(data.as_ptr()) }
   }
 }
 
 #[repr(C)]
 pub struct V8(*mut V8);
 impl V8 {
-  pub fn Runtime(source: &[u8]) -> i32 {
+  pub fn Runtime() -> i32 {
+    let on_seed = || {
+
+    };
+
     extern fn on_locked() {
       with_isolate_scope(&|| {
         with_handle_scope(on_handle_scoped);
       });
     }
-
     extern fn on_handle_scoped() {
       Context::New();
       with_context_scope(on_context_scoped);
     }
-
     extern fn on_context_scoped() {
-      println!("haha");
+      let process_str = String::NewFromUtf8("process");
+      let source = Commander::GetSource();
+      let mut script = Script::Compile(source.as_bytes());
+      script.Run();
     }
 
     let mut code :i32 = 1;

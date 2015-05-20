@@ -165,14 +165,18 @@ bool v8_value_isArray(void *data) {
   return instance->IsArray();
 }
 
-Local<Script> v8_script_compile(Isolate *isolate, char *data) {
+Local<Script> v8_script_compile(char *data) {
   Local<String> source = String::NewFromUtf8(isolate, data);
   Local<Script> script = Script::Compile(source);
   return script;
 }
 
-void v8_script_run(Script *script) {
-  script->Run();
+void v8_script_run(Script **script) {
+  Local<Value> result = (*script)->Run();
+}
+
+Local<String> v8_string_new_from_utf8(char *data) {
+  return String::NewFromUtf8(isolate, data);
 }
 
 }

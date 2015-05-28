@@ -1,3 +1,5 @@
 
-println(JSON.stringify(process, null, 2));
+println("start");
+process.getgid();
 process.exit(1);
+

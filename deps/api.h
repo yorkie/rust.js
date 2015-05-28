@@ -32,7 +32,6 @@ void v8_context_enter();
 void v8_context_exit();
 void v8_context_global();
 void v8_context_scope(rust_callback callback);
-// void v8_context_global_set(char *key, Local<Value> val);
 
 bool v8_value_isArgumentsObject(void *data);
 bool v8_value_isArray(void *data);
@@ -40,7 +39,7 @@ bool v8_value_isArray(void *data);
 Local<Script> v8_script_compile(char *data);
 void v8_script_run(Script **script);
 
-// Local<String> v8_string_new_from_utf8(char *data);
+Local<String> v8_string_new_from_utf8(char *data);
 Local<String> v8_string_empty(String **str);
 
 Local<Object> v8_object_new();

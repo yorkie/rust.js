@@ -28,12 +28,11 @@ pub fn new_instance() -> i32 {
     with_context_scope(on_context_scoped);
   }
   extern fn on_context_scoped() {
-    let process = Object::New();
-    let console = Object::New();
+    let mut process = Object::New();
     let global = Context::Global();
 
+    process = SetupProcess(process);
     global.Set(String::NewFromUtf8("process"), process);
-    global.Set(String::NewFromUtf8("console"), console);
 
     let source = Commander::GetSource();
     let script = Script::Compile(source.as_bytes());

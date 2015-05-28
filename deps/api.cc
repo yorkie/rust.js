@@ -125,11 +125,6 @@ void v8_context_scope(rust_callback callback) {
   callback();
 }
 
-void v8_context_global_set(char *key, Value *data) {
-  printf("global_set: %p %p\n", key, data);
-  // context->Global()->Set(String::NewFromUtf8(isolate, key), data);
-}
-
 bool v8_value_isArgumentsObject(void *data) {
   Value *instance = static_cast<Value *>(data);
   return instance->IsArgumentsObject();

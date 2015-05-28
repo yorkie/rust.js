@@ -1,6 +1,8 @@
 #![allow(non_snake_case)]
 
 extern crate libc;
+
+use std::ffi::CString;
 use std::mem;
 
 extern {
@@ -30,7 +32,7 @@ extern {
   fn v8_script_compile(source: &[u8]) -> Script;
   fn v8_script_run(this: &Script);
 
-  fn v8_string_new_from_utf8(data: *const u8) -> String;
+  fn v8_string_new_from_utf8(data: *const libc::c_char) -> String;
   fn v8_string_empty(this: &String) -> String;
 
   fn v8_object_new() -> Object;
@@ -150,7 +152,8 @@ value_method!(String);
 
 impl String {
   pub fn NewFromUtf8(data: &str) -> String {
-    unsafe { v8_string_new_from_utf8(data.as_ptr()) }
+    let c_pdata = CString::new(data).unwrap();
+    unsafe { v8_string_new_from_utf8(c_pdata.as_ptr()) }
   }
   pub fn Empty(&self) -> String {
     unsafe { v8_string_empty(self) }

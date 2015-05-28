@@ -6,15 +6,16 @@ use std::io::prelude::*;
 use std::fs::File;
 
 use self::clap::{Arg, App};
+use util::config;
 
 pub struct Commander;
 impl Commander {
   
   pub fn GetSource() -> String {
-    let matches = App::new("rustjs")
-    .version("0.1.0")
-    .author("Yorkie Liu <yorkiefixer@gmail.com>")
-    .about("The platform lets you can work with Rust, C, C++ and JavaScript compatible with NPM and Cargo")
+    let matches = App::new(config::NAME)
+    .version(config::VERSION)
+    .author(config::AUTHOR)
+    .about(config::DESCRIPTION)
     .arg(
       Arg::with_name("INPUT")
       .help("main script file")

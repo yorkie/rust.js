@@ -3,7 +3,6 @@
 extern crate libc;
 
 use std::mem;
-use std::str;
 use std::string;
 use std::ffi::CString;
 use std::ffi::CStr;

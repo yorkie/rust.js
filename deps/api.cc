@@ -269,6 +269,16 @@ bool v8_value_is_string(Value **val) {
 }
 
 /**
+ * call val->ToString()
+ * @method v8_value_to_string
+ * @param {Value} this
+ * @return {String} the result
+ */
+Local<String> v8_value_to_string(Value **val) {
+  return (*val)->ToString();
+}
+
+/**
  * The String class
  * @class String
  */
@@ -359,8 +369,8 @@ Local<Value> v8_function_call(Function **func, Local<Value> global, Local<Value>
  * @param {int} index
  * @return {Value} the result
  */
-Local<Value> v8_function_callback_info_at(FunctionCallbackInfo<Value> *callbackInfo, int index) {
-  return (*callbackInfo)[index];
+Local<Value> v8_function_callback_info_at(FunctionCallbackInfo<Value> **callbackInfo, int index) {
+  return (**callbackInfo)[index];
 }
 
 /**

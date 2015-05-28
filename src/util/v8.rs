@@ -33,6 +33,7 @@ extern {
   fn v8_script_run(this: &Script);
 
   fn v8_value_is_string(this: &Value) -> bool;
+  fn v8_value_to_string(this: &Value) -> String;
 
   fn v8_string_new_from_utf8(data: *const libc::c_char) -> String;
   fn v8_string_empty(this: &String) -> String;
@@ -42,7 +43,6 @@ extern {
   fn v8_object_set(this: &Object, key: &Value, val: &Value) -> bool;
 
   fn v8_function_call(this: &Function, global: &Value, argv: &[Value]) -> Value;
-
   fn v8_function_callback_info_at(this: &FunctionCallbackInfo, index: i32) -> Value;
 
   // fn v8_function_tmpl_new() -> FunctionTemplate;
@@ -68,6 +68,10 @@ macro_rules! value_method(
       #[inline(always)]
       pub fn IsString(&self) -> bool {
         unsafe { v8_value_is_string(self.as_val()) }
+      }
+      #[inline(always)]
+      pub fn ToString(&self) -> String {
+        unsafe { v8_value_to_string(self.as_val()) }
       }
     }
     impl IndexT for $ty {

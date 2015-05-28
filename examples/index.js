@@ -6,4 +6,4 @@ process
 process.title
 process.version
 
-println()
+println('abc');

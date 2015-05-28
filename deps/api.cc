@@ -269,6 +269,26 @@ bool v8_value_is_string(Value **val) {
 }
 
 /**
+ * call val->ToNumber()
+ * @method v8_value_to_number
+ * @param {Value} this
+ * @return {Number} the result
+ */
+Local<Number> v8_value_to_number(Value **val) {
+  return (*val)->ToNumber();
+}
+
+/**
+ * call val->ToInteger()
+ * @method v8_value_to_integer
+ * @param {Value} this
+ * @return {Number} the result
+ */
+Local<Integer> v8_value_to_integer(Value **val) {
+  return (*val)->ToInteger();
+}
+
+/**
  * call val->ToString()
  * @method v8_value_to_string
  * @param {Value} this
@@ -276,6 +296,36 @@ bool v8_value_is_string(Value **val) {
  */
 Local<String> v8_value_to_string(Value **val) {
   return (*val)->ToString();
+}
+
+/**
+ * call val->Int32Value()
+ * @method v8_value_as_int32
+ * @param {Value} this
+ * @return {int32_t} the result
+ */
+int32_t v8_value_as_int32(Value **val) {
+  return (*val)->Int32Value();
+}
+
+/**
+ * call val->IntegerValue()
+ * @method v8_value_as_int64
+ * @param {Value} this
+ * @return {int64_t} the result
+ */
+int64_t v8_value_as_int64(Value **val) {
+  return (*val)->IntegerValue();
+}
+
+/**
+ * call val->Uint32Value()
+ * @method v8_value_as_uint32
+ * @param {Value} this
+ * @return {uint32_t} the result
+ */
+uint32_t v8_value_as_uint32(Value **val) {
+  return (*val)->Uint32Value();
 }
 
 /**
@@ -305,14 +355,24 @@ Local<String> v8_string_empty(String **str) {
 
 /**
  * convert string to c/c++ string
- * @method v8_string_to_cstr
+ * @method v8_string_as_string
  * @param {String} this
  * @return {char*}
  */
-char * v8_string_to_cstr(String **str) {
+char * v8_string_as_string(String **str) {
   String::Utf8Value val((*str)->ToString());
   return *val;
 }
+
+/**
+ * The Number class
+ * @class Number
+ */
+
+/**
+ * The Integer class
+ * @class Integer
+ */
 
 /**
  * The Object class

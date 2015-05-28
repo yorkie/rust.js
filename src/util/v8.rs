@@ -36,10 +36,15 @@ extern {
 
   fn v8_value_is_string(this: &Value) -> bool;
   fn v8_value_to_string(this: &Value) -> String;
+  fn v8_value_to_number(this: &Value) -> Number;
+  fn v8_value_to_integer(this: &Value) -> Integer;
+  fn v8_value_as_int32(this: &Value) -> i32;
+  fn v8_value_as_int64(this: &Value) -> i64;
+  fn v8_value_as_uint32(this: &Value) -> u32;
 
   fn v8_string_new_from_utf8(data: *const libc::c_char) -> String;
   fn v8_string_empty(this: &String) -> String;
-  fn v8_string_to_cstr(this: &String) -> *const libc::c_char;
+  fn v8_string_as_string(this: &String) -> *const libc::c_char;
 
   fn v8_object_new() -> Object;
   fn v8_object_get(this: &Object, key: &Value) -> Value;
@@ -75,6 +80,23 @@ macro_rules! value_method(
       #[inline(always)]
       pub fn ToString(&self) -> String {
         unsafe { v8_value_to_string(self.as_val()) }
+      }
+      #[inline(always)]
+      pub fn ToNumber(&self) -> Number {
+        unsafe { v8_value_to_number(self.as_val()) }
+      }
+      #[inline(always)]
+      pub fn ToInteger(&self) -> Integer {
+        unsafe { v8_value_to_integer(self.as_val()) }
+      }
+      pub fn Int32Value(&self) -> i32 {
+        unsafe { v8_value_as_int32(self.as_val()) }
+      }
+      pub fn IntegerValue(&self) -> i64 {
+        unsafe { v8_value_as_int64(self.as_val()) }
+      }
+      pub fn Uint32Value(&self) -> u32 {
+        unsafe { v8_value_as_uint32(self.as_val()) }
       }
     }
     impl IndexT for $ty {
@@ -182,13 +204,21 @@ impl String {
   pub fn as_string(&self) -> string::String {
     unsafe { 
       let mut v: Vec<u8> = Vec::new();
-      for i in CStr::from_ptr(v8_string_to_cstr(self)).to_bytes() {
+      for i in CStr::from_ptr(v8_string_as_string(self)).to_bytes() {
         v.push(*i);
       }
       string::String::from_utf8(v).unwrap()
     }
   }
 }
+
+#[repr(C)]
+pub struct Number(*mut *mut Number);
+value_method!(Number);
+
+#[repr(C)]
+pub struct Integer(*mut *mut Integer);
+value_method!(Integer);
 
 #[repr(C)]
 pub struct Object(*mut *mut Object);

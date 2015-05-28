@@ -2,8 +2,11 @@
 
 extern crate libc;
 
-use std::ffi::CString;
 use std::mem;
+use std::str;
+use std::string;
+use std::ffi::CString;
+use std::ffi::CStr;
 
 extern {
   fn v8_free_platform() -> bool;
@@ -37,6 +40,7 @@ extern {
 
   fn v8_string_new_from_utf8(data: *const libc::c_char) -> String;
   fn v8_string_empty(this: &String) -> String;
+  fn v8_string_to_cstr(this: &String) -> *const libc::c_char;
 
   fn v8_object_new() -> Object;
   fn v8_object_get(this: &Object, key: &Value) -> Value;
@@ -175,6 +179,15 @@ impl String {
   }
   pub fn Empty(&self) -> String {
     unsafe { v8_string_empty(self) }
+  }
+  pub fn as_string(&self) -> string::String {
+    unsafe { 
+      let mut v: Vec<u8> = Vec::new();
+      for i in CStr::from_ptr(v8_string_to_cstr(self)).to_bytes() {
+        v.push(*i);
+      }
+      string::String::from_utf8(v).unwrap()
+    }
   }
 }
 

@@ -304,6 +304,17 @@ Local<String> v8_string_empty(String **str) {
 }
 
 /**
+ * convert string to c/c++ string
+ * @method v8_string_to_cstr
+ * @param {String} this
+ * @return {char*}
+ */
+char * v8_string_to_cstr(String **str) {
+  String::Utf8Value val((*str)->ToString());
+  return *val;
+}
+
+/**
  * The Object class
  * @class Object
  */

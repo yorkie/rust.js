@@ -24,7 +24,7 @@ use util::v8::{
 
 extern fn println(arguments: FunctionCallbackInfo) {
   let val = arguments.At(0).ToString();
-  // println!("{:?}", val);
+  println!("{}", val.as_string());
 }
 
 pub fn new_instance() -> i32 {

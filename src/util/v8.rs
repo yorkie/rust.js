@@ -89,12 +89,15 @@ macro_rules! value_method(
       pub fn ToInteger(&self) -> Integer {
         unsafe { v8_value_to_integer(self.as_val()) }
       }
+      #[inline(always)]
       pub fn Int32Value(&self) -> i32 {
         unsafe { v8_value_as_int32(self.as_val()) }
       }
+      #[inline(always)]
       pub fn IntegerValue(&self) -> i64 {
         unsafe { v8_value_as_int64(self.as_val()) }
       }
+      #[inline(always)]
       pub fn Uint32Value(&self) -> u32 {
         unsafe { v8_value_as_uint32(self.as_val()) }
       }

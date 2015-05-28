@@ -9,13 +9,26 @@ use util::v8::{
   V8,
   Script,
   Context,
-  Object,
+  // Value,
   String,
+  Object,
+  // Function,
+  // FunctionCallback,
+  FunctionCallbackInfo,
+  FunctionTemplate,
   with_isolate_scope,
   with_context_scope,
   with_handle_scope,
   with_locker
 };
+
+extern fn println(arguments: FunctionCallbackInfo) {
+  let val = arguments.At(0);
+  if val.IsString() {
+    println!("this is string");
+  }
+  println!("hello");
+}
 
 pub fn new_instance() -> i32 {
   extern fn on_locked() {
@@ -33,6 +46,7 @@ pub fn new_instance() -> i32 {
 
     process = SetupProcess(process);
     global.Set(String::NewFromUtf8("process"), process);
+    global.Set(String::NewFromUtf8("println"), FunctionTemplate::New(println).GetFunction());
 
     let source = Commander::GetSource();
     let script = Script::Compile(source.as_bytes());

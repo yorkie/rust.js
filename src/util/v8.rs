@@ -32,6 +32,8 @@ extern {
   fn v8_script_compile(source: &[u8]) -> Script;
   fn v8_script_run(this: &Script);
 
+  fn v8_value_is_string(this: &Value) -> bool;
+
   fn v8_string_new_from_utf8(data: *const libc::c_char) -> String;
   fn v8_string_empty(this: &String) -> String;
 
@@ -39,7 +41,13 @@ extern {
   fn v8_object_get(this: &Object, key: &Value) -> Value;
   fn v8_object_set(this: &Object, key: &Value, val: &Value) -> bool;
 
-  fn v8_function_tmpl_new() -> FunctionTemplate;
+  fn v8_function_call(this: &Function, global: &Value, argv: &[Value]) -> Value;
+
+  fn v8_function_callback_info_at(this: &FunctionCallbackInfo, index: i32) -> Value;
+
+  // fn v8_function_tmpl_new() -> FunctionTemplate;
+  fn v8_function_tmpl_new_with_callback(callback: &FunctionCallback) -> FunctionTemplate;
+  fn v8_function_tmpl_get_function(this: &FunctionTemplate) -> Function;
   fn v8_function_tmpl_set_class_name(this: &FunctionTemplate, name: &[u8]);
   fn v8_function_tmpl_new_instance(this: &FunctionTemplate) -> Object;
 
@@ -56,6 +64,12 @@ pub trait ValueT {
 
 macro_rules! value_method(
   ($ty:ident) => (
+    impl $ty {
+      #[inline(always)]
+      pub fn IsString(&self) -> bool {
+        unsafe { v8_value_is_string(self.as_val()) }
+      }
+    }
     impl IndexT for $ty {
       fn get(&self, object: &Object) -> Value {
         unsafe { 
@@ -177,10 +191,34 @@ impl Object {
 }
 
 #[repr(C)]
+pub struct Function(*mut *mut Function);
+value_method!(Function);
+
+impl Function {
+  pub fn Call<T: ValueT>(&self, recv: T, argv: &[Value]) -> Value {
+    unsafe { v8_function_call(self, recv.as_val(), argv) }
+  }
+}
+
+#[repr(C)]
+pub type FunctionCallback = extern fn(FunctionCallbackInfo);
+
+#[repr(C)]
+pub struct FunctionCallbackInfo(*mut *mut FunctionCallbackInfo);
+impl FunctionCallbackInfo {
+  pub fn At(&self, index: i32) -> Value {
+    unsafe { v8_function_callback_info_at(self, index) }
+  }
+}
+
+#[repr(C)]
 pub struct FunctionTemplate(*mut *mut FunctionTemplate);
 impl FunctionTemplate {
-  pub fn New() -> FunctionTemplate {
-    unsafe { v8_function_tmpl_new() }
+  pub fn New(callback: FunctionCallback) -> FunctionTemplate {
+    unsafe { v8_function_tmpl_new_with_callback(&callback) }
+  }
+  pub fn GetFunction(&self) -> Function {
+    unsafe { v8_function_tmpl_get_function(self) }
   }
   pub fn SetClassName(&self, name: &[u8]) {
     unsafe { v8_function_tmpl_set_class_name(self, name) }

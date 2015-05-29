@@ -3,17 +3,14 @@
 pub mod util;
 pub mod builtin;
 
-use builtin::process::SetupProcess;
 use util::cmd::Commander;
+use util::module::ModulesHeap;
 use util::v8::{
   V8,
   Script,
   Context,
-  // Value,
   String,
   Object,
-  // Function,
-  // FunctionCallback,
   FunctionCallbackInfo,
   FunctionTemplate,
   with_isolate_scope,
@@ -38,11 +35,16 @@ pub fn new_instance() -> i32 {
     with_context_scope(on_context_scoped);
   }
   extern fn on_context_scoped() {
-    let mut process = Object::New();
+    let process = Object::New();
     let global = Context::Global();
+    let mut modules = ModulesHeap::New();
 
-    process = SetupProcess(process);
-    global.Set(String::NewFromUtf8("process"), process);
+    modules.binding("net", builtin::net::Init());
+    modules.binding("http", builtin::http::Init());
+    modules.binding("path", builtin::path::Init());
+
+    global.Set(String::NewFromUtf8("process"), builtin::process::SetupProcess(process));
+    global.Set(String::NewFromUtf8("require"), builtin::module::GetRequire());
     global.Set(String::NewFromUtf8("println"), FunctionTemplate::New(println).GetFunction());
 
     let source = Commander::GetSource();

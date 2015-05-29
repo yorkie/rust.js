@@ -39,12 +39,25 @@ pub fn new_instance() -> i32 {
     let global = Context::Global();
     let mut modules = ModulesHeap::New();
 
-    modules.binding("net", builtin::net::Init());
+    modules.binding("buffer", builtin::buffer::Init());
+    modules.binding("console", builtin::console::Init());
+    modules.binding("crypto", builtin::crypto::Init());
+    modules.binding("datagram", builtin::datagram::Init());
+    modules.binding("dns", builtin::dns::Init());
+    modules.binding("fs", builtin::fs::Init());
     modules.binding("http", builtin::http::Init());
+    modules.binding("https", builtin::https::Init());
+    modules.binding("net", builtin::net::Init());
+    modules.binding("os", builtin::os::Init());
     modules.binding("path", builtin::path::Init());
+    modules.binding("querystring", builtin::path::Init());
+    modules.binding("readline", builtin::readline::Init());
+    modules.binding("repl", builtin::repl::Init());
+    modules.binding("tls", builtin::tls::Init());
+    modules.binding("url", builtin::url::Init());
 
-    global.Set(String::NewFromUtf8("process"), builtin::process::SetupProcess(process));
-    global.Set(String::NewFromUtf8("require"), builtin::module::GetRequire());
+    global.Set(String::NewFromUtf8("process"), builtin::process::Setup(process));
+    global.Set(String::NewFromUtf8("require"), builtin::module::Setup(modules));
     global.Set(String::NewFromUtf8("println"), FunctionTemplate::New(println).GetFunction());
 
     let source = Commander::GetSource();

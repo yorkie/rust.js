@@ -23,7 +23,7 @@ extern fn getpid(arguments: v8::FunctionCallbackInfo) {
   );
 }
 
-pub fn SetupProcess(process: v8::Object) -> v8::Object {
+pub fn Setup(process: v8::Object) -> v8::Object {
   // bind functions
   process.Set(v8::String::NewFromUtf8("exit"), v8::FunctionTemplate::New(exit).GetFunction());
   process.Set(v8::String::NewFromUtf8("getgid"), v8::FunctionTemplate::New(getgid).GetFunction());

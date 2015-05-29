@@ -1,14 +1,11 @@
 
 use util::v8;
+use util::module::ModulesHeap;
 
 extern fn require(arguments: v8::FunctionCallbackInfo) {
-  let path = arguments.At(0);
+
 }
 
-pub fn GetRequire() -> v8::Function {
+pub fn Setup(modules: ModulesHeap) -> v8::Function {
   v8::FunctionTemplate::New(require).GetFunction()
-}
-
-pub fn GetModule() {
-
 }

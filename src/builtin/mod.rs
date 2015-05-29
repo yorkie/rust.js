@@ -15,4 +15,5 @@ pub mod process;
 pub mod querystring;
 pub mod readline;
 pub mod repl;
+pub mod tls;
 pub mod url;

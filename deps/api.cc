@@ -434,6 +434,16 @@ Local<Value> v8_function_call(Function **func, Local<Value> global, Local<Value>
  */
 
 /**
+ * get length of arguments
+ * @method v8_function_callback_info_length
+ * @param {FunctionCallbackInfo} callbackInfo
+ * @return {int} the result
+ */
+int v8_function_callback_info_length(FunctionCallbackInfo<Value> **callbackInfo) {
+  return (*callbackInfo)->Length();
+}
+
+/**
  * get value from function arguments by index
  * @method v8_function_callback_info_at
  * @param {FunctionCallbackInfo} callbackInfo
@@ -442,6 +452,78 @@ Local<Value> v8_function_call(Function **func, Local<Value> global, Local<Value>
  */
 Local<Value> v8_function_callback_info_at(FunctionCallbackInfo<Value> **callbackInfo, int index) {
   return (**callbackInfo)[index];
+}
+
+/**
+ * get this
+ * @method v8_function_callback_info_this
+ * @param {FunctionCallbackInfo} callbackInfo
+ * @return {Value} the result
+ */
+Local<Object> v8_function_callback_info_this(FunctionCallbackInfo<Value> **callbackInfo) {
+  return (*callbackInfo)->This();
+}
+
+/**
+ * get holder
+ * @method v8_function_callback_info_holder
+ * @param {FunctionCallbackInfo} callbackInfo
+ * @return {Value} the result
+ */
+Local<Object> v8_function_callback_info_holder(FunctionCallbackInfo<Value> **callbackInfo) {
+  return (*callbackInfo)->Holder();
+}
+
+/**
+ * get return value
+ * @method v8_function_callback_info_holder
+ * @param {FunctionCallbackInfo} callbackInfo
+ * @return {ReturnValue} the result
+ */
+ReturnValue<Value> v8_function_callback_info_get_return_value(FunctionCallbackInfo<Value> **callbackInfo) {
+  return (*callbackInfo)->GetReturnValue();
+}
+
+/**
+ * The ReturnValue class
+ * @class ReturnValue
+ */
+
+/**
+ * set with object
+ * @method v8_return_value_set
+ * @param {ReturnValue} retval
+ * @param {Value} handle
+ */
+void v8_return_value_set(ReturnValue<Value> *retval, Local<Value> *val) {
+  return retval->Set(*val);
+}
+
+/**
+ * set null
+ * @method v8_return_value_set_null
+ * @param {ReturnValue} retval
+ */
+void v8_return_value_set_null(ReturnValue<Value> *retval) {
+  return retval->SetNull();
+}
+
+/**
+ * set undefined
+ * @method v8_return_value_set_null
+ * @param {ReturnValue} retval
+ */
+void v8_return_value_set_undefined(ReturnValue<Value> *retval) {
+  return retval->SetUndefined();
+}
+
+/**
+ * set empty string
+ * @method v8_return_value_set_null
+ * @param {ReturnValue} retval
+ */
+void v8_return_value_set_empty_string(ReturnValue<Value> *retval) {
+  return retval->SetEmptyString();
 }
 
 /**

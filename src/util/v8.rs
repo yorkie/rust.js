@@ -51,7 +51,16 @@ extern {
   fn v8_object_set(this: &Object, key: &Value, val: &Value) -> bool;
 
   fn v8_function_call(this: &Function, global: &Value, argv: &[Value]) -> Value;
+  fn v8_function_callback_info_length(this: &FunctionCallbackInfo) -> i64;
   fn v8_function_callback_info_at(this: &FunctionCallbackInfo, index: i32) -> Value;
+  fn v8_function_callback_info_this(this: &FunctionCallbackInfo) -> Object;
+  fn v8_function_callback_info_holder(this: &FunctionCallbackInfo) -> Object;
+  fn v8_function_callback_info_get_return_value(this: &FunctionCallbackInfo) -> ReturnValue;
+
+  fn v8_return_value_set(this: &ReturnValue, val: &Value);
+  fn v8_return_value_set_null(this: &ReturnValue);
+  fn v8_return_value_set_undefined(this: &ReturnValue);
+  fn v8_return_value_set_empty_string(this: &ReturnValue);
 
   // fn v8_function_tmpl_new() -> FunctionTemplate;
   fn v8_function_tmpl_new_with_callback(callback: &FunctionCallback) -> FunctionTemplate;
@@ -255,8 +264,37 @@ pub type FunctionCallback = extern fn(FunctionCallbackInfo);
 #[repr(C)]
 pub struct FunctionCallbackInfo(*mut *mut FunctionCallbackInfo);
 impl FunctionCallbackInfo {
+  pub fn Length(&self) -> i64 {
+    unsafe { v8_function_callback_info_length(self) }
+  }
   pub fn At(&self, index: i32) -> Value {
     unsafe { v8_function_callback_info_at(self, index) }
+  }
+  pub fn This(&self) -> Object {
+    unsafe { v8_function_callback_info_this(self) }
+  }
+  pub fn Holder(&self) -> Object {
+    unsafe { v8_function_callback_info_holder(self) }
+  }
+  pub fn GetReturnValue(&self) -> ReturnValue {
+    unsafe { v8_function_callback_info_get_return_value(self) }
+  }
+}
+
+#[repr(C)]
+pub struct ReturnValue(*mut *mut ReturnValue);
+impl ReturnValue {
+  pub fn Set<T: ValueT>(&self, value: T) {
+    unsafe { v8_return_value_set(self, value.as_val()) }
+  }
+  pub fn SetNull(&self) {
+    unsafe { v8_return_value_set_null(self) }
+  }
+  pub fn SetUndefined(&self) {
+    unsafe { v8_return_value_set_undefined(self) }
+  }
+  pub fn SetEmptyString(&self) {
+    unsafe { v8_return_value_set_empty_string(self) }
   }
 }
 

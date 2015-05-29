@@ -1,5 +1,5 @@
 
 println("start");
-process.getgid();
+println(process.getgid());
 process.exit(1);
 

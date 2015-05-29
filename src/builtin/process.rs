@@ -16,6 +16,7 @@ extern fn getgid(arguments: FunctionCallbackInfo) {
     let gid = unistd::getgid();
     println!("{:?}", gid);
   }
+  arguments.GetReturnValue().SetUndefined();
 }
 
 pub fn SetupProcess(process: Object) -> Object {

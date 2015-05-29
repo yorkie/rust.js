@@ -5,38 +5,26 @@ pub mod builtin;
 
 use util::cmd::Commander;
 use util::module::ModulesHeap;
-use util::v8::{
-  V8,
-  Script,
-  Context,
-  String,
-  Object,
-  FunctionCallbackInfo,
-  FunctionTemplate,
-  with_isolate_scope,
-  with_context_scope,
-  with_handle_scope,
-  with_locker
-};
+use util::v8;
 
-extern fn println(arguments: FunctionCallbackInfo) {
+extern fn println(arguments: v8::FunctionCallbackInfo) {
   let val = arguments.At(0).ToString();
   println!("{}", val.as_string());
 }
 
 pub fn new_instance() -> i32 {
   extern fn on_locked() {
-    with_isolate_scope(&|| {
-      with_handle_scope(on_handle_scoped);
+    v8::with_isolate_scope(&|| {
+      v8::with_handle_scope(on_handle_scoped);
     });
   }
   extern fn on_handle_scoped() {
-    Context::New();
-    with_context_scope(on_context_scoped);
+    v8::Context::New();
+    v8::with_context_scope(on_context_scoped);
   }
   extern fn on_context_scoped() {
-    let process = Object::New();
-    let global = Context::Global();
+    let process = v8::Object::New();
+    let global = v8::Context::Global();
     let mut modules = ModulesHeap::New();
 
     modules.binding("buffer", builtin::buffer::Init());
@@ -56,23 +44,23 @@ pub fn new_instance() -> i32 {
     modules.binding("tls", builtin::tls::Init());
     modules.binding("url", builtin::url::Init());
 
-    global.Set(String::NewFromUtf8("process"), builtin::process::Setup(process));
-    global.Set(String::NewFromUtf8("require"), builtin::module::Setup(modules));
-    global.Set(String::NewFromUtf8("println"), FunctionTemplate::New(println).GetFunction());
+    global.Set(v8::String::NewFromUtf8("process"), builtin::process::Setup(process));
+    global.Set(v8::String::NewFromUtf8("require"), builtin::module::Setup(modules));
+    global.Set(v8::String::NewFromUtf8("println"), v8::FunctionTemplate::New(println).GetFunction());
 
     let source = Commander::GetSource();
-    let script = Script::Compile(source.as_bytes());
+    let script = v8::Script::Compile(source.as_bytes());
     script.Run();
   }
 
   let code :i32 = 1;
-  V8::InitializePlatform();
-  V8::Initialize();
-  V8::SetArrayBufferAllocator();
-  V8::NewIsolate();
-  with_locker(on_locked);
-  V8::DisposeIsolate();
-  V8::Dispose();
-  V8::UnInitializePlatform();
+  v8::V8::InitializePlatform();
+  v8::V8::Initialize();
+  v8::V8::SetArrayBufferAllocator();
+  v8::V8::NewIsolate();
+  v8::with_locker(on_locked);
+  v8::V8::DisposeIsolate();
+  v8::V8::Dispose();
+  v8::V8::UnInitializePlatform();
   return code;
 }

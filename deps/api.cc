@@ -500,6 +500,36 @@ void v8_return_value_set(ReturnValue<Value> *retval, Local<Value> *val) {
 }
 
 /**
+ * set with object
+ * @method v8_return_value_set_bool
+ * @param {ReturnValue} retval
+ * @param {bool} val
+ */
+void v8_return_value_set_bool(ReturnValue<Value> *retval, bool val) {
+  return retval->Set(val);
+}
+
+/**
+ * set with object
+ * @method v8_return_value_set_int32
+ * @param {ReturnValue} retval
+ * @param {bool} val
+ */
+void v8_return_value_set_int32(ReturnValue<Value> *retval, int32_t val) {
+  return retval->Set(val);
+}
+
+/**
+ * set with object
+ * @method v8_return_value_set_uint32
+ * @param {ReturnValue} retval
+ * @param {bool} val
+ */
+void v8_return_value_set_uint32(ReturnValue<Value> *retval, uint32_t val) {
+  return retval->Set(val);
+}
+
+/**
  * set null
  * @method v8_return_value_set_null
  * @param {ReturnValue} retval

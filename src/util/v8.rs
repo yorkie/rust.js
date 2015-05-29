@@ -58,6 +58,9 @@ extern {
   fn v8_function_callback_info_get_return_value(this: &FunctionCallbackInfo) -> ReturnValue;
 
   fn v8_return_value_set(this: &ReturnValue, val: &Value);
+  fn v8_return_value_set_bool(this: &ReturnValue, val: bool);
+  fn v8_return_value_set_int32(this: &ReturnValue, val: i32);
+  fn v8_return_value_set_uint32(this: &ReturnValue, val: u32);
   fn v8_return_value_set_null(this: &ReturnValue);
   fn v8_return_value_set_undefined(this: &ReturnValue);
   fn v8_return_value_set_empty_string(this: &ReturnValue);
@@ -286,6 +289,15 @@ pub struct ReturnValue(*mut *mut ReturnValue);
 impl ReturnValue {
   pub fn Set<T: ValueT>(&self, value: T) {
     unsafe { v8_return_value_set(self, value.as_val()) }
+  }
+  pub fn SetWithBool(&self, value: bool) {
+    unsafe { v8_return_value_set_bool(self, value) }
+  }
+  pub fn SetWithInt32(&self, value: i32) {
+    unsafe { v8_return_value_set_int32(self, value) }
+  }
+  pub fn SetWithUint32(&self, value: u32) {
+    unsafe { v8_return_value_set_uint32(self, value) }
   }
   pub fn SetNull(&self) {
     unsafe { v8_return_value_set_null(self) }

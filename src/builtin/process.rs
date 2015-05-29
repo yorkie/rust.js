@@ -12,16 +12,23 @@ extern fn exit(arguments: FunctionCallbackInfo) {
 }
 
 extern fn getgid(arguments: FunctionCallbackInfo) {
-  unsafe {
-    let gid = unistd::getgid();
-    println!("{:?}", gid);
-  }
-  arguments.GetReturnValue().SetUndefined();
+  arguments.GetReturnValue().SetWithUint32(
+    unsafe { unistd::getgid() }
+  );
+}
+
+extern fn getpid(arguments: FunctionCallbackInfo) {
+  arguments.GetReturnValue().SetWithInt32(
+    unsafe { unistd::getpid() }
+  );
 }
 
 pub fn SetupProcess(process: Object) -> Object {
+  // bind functions
   process.Set(String::NewFromUtf8("exit"), FunctionTemplate::New(exit).GetFunction());
   process.Set(String::NewFromUtf8("getgid"), FunctionTemplate::New(getgid).GetFunction());
+  process.Set(String::NewFromUtf8("getpid"), FunctionTemplate::New(getpid).GetFunction());
+  // bind consts
   process.Set(String::NewFromUtf8("title"), String::NewFromUtf8(config::NAME));
   process.Set(String::NewFromUtf8("version"), String::NewFromUtf8(config::VERSION));
   process

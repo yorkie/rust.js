@@ -9,8 +9,7 @@ Build
 
 Prerequisites:
 
-- gcc and g++ 4.8 or newer, or
-- clang and clang++ 3.4 or newer
+- Rust 1.0.0
 - Python 2.6 or 2.7
 - GNU Make 3.81 or newer
 

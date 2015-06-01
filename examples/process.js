@@ -1,9 +1,9 @@
 
-var net = require('net');
 
 println('group id: ' + process.getgid());
 println('process id: ' + process.getpid());
-println(net);
+println('environment variables:');
+println(Object.keys(process.env));
 
 process.exit(1);
 

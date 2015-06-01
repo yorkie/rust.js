@@ -1,6 +1,7 @@
 
 extern crate libc;
 
+use std::env;
 use std::process;
 use util::v8;
 use util::config;
@@ -31,5 +32,13 @@ pub fn Setup(process: v8::Object) -> v8::Object {
   // bind consts
   process.Set(v8::String::NewFromUtf8("title"), v8::String::NewFromUtf8(config::NAME));
   process.Set(v8::String::NewFromUtf8("version"), v8::String::NewFromUtf8(config::VERSION));
+
+  // set process.env
+  let envObject = v8::Object::New();
+  for (key, val) in env::vars() {
+    envObject.Set(v8::String::NewFromUtf8(&*key), v8::String::NewFromUtf8(&*val));
+  }
+  process.Set(v8::String::NewFromUtf8("env"), envObject);
+
   process
 }

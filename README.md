@@ -37,6 +37,12 @@ POSITIONAL ARGUMENTS:
     INPUT      main script file
 ```
 
+Worked modules
+--------------
+
+- [`path`](src/builtin/path.rs)
+
+
 License
 -------------
 MIT

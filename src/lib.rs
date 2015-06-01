@@ -4,7 +4,6 @@ pub mod util;
 pub mod builtin;
 
 use util::cmd::Commander;
-use util::module::ModulesHeap;
 use util::v8;
 
 extern fn println(arguments: v8::FunctionCallbackInfo) {
@@ -25,27 +24,28 @@ pub fn new_instance() -> i32 {
   extern fn on_context_scoped() {
     let process = v8::Object::New();
     let global = v8::Context::Global();
-    let mut modules = ModulesHeap::New();
+    let modules = v8::Object::New();
 
-    modules.binding("buffer", builtin::buffer::Init());
-    modules.binding("console", builtin::console::Init());
-    modules.binding("crypto", builtin::crypto::Init());
-    modules.binding("datagram", builtin::datagram::Init());
-    modules.binding("dns", builtin::dns::Init());
-    modules.binding("fs", builtin::fs::Init());
-    modules.binding("http", builtin::http::Init());
-    modules.binding("https", builtin::https::Init());
-    modules.binding("net", builtin::net::Init());
-    modules.binding("os", builtin::os::Init());
-    modules.binding("path", builtin::path::Init());
-    modules.binding("querystring", builtin::path::Init());
-    modules.binding("readline", builtin::readline::Init());
-    modules.binding("repl", builtin::repl::Init());
-    modules.binding("tls", builtin::tls::Init());
-    modules.binding("url", builtin::url::Init());
+    modules.Set(v8::String::NewFromUtf8("buffer"), builtin::buffer::Init());
+    modules.Set(v8::String::NewFromUtf8("console"), builtin::console::Init());
+    modules.Set(v8::String::NewFromUtf8("crypto"), builtin::crypto::Init());
+    modules.Set(v8::String::NewFromUtf8("datagram"), builtin::datagram::Init());
+    modules.Set(v8::String::NewFromUtf8("dns"), builtin::dns::Init());
+    modules.Set(v8::String::NewFromUtf8("fs"), builtin::fs::Init());
+    modules.Set(v8::String::NewFromUtf8("http"), builtin::http::Init());
+    modules.Set(v8::String::NewFromUtf8("https"), builtin::https::Init());
+    modules.Set(v8::String::NewFromUtf8("net"), builtin::net::Init());
+    modules.Set(v8::String::NewFromUtf8("os"), builtin::os::Init());
+    modules.Set(v8::String::NewFromUtf8("path"), builtin::path::Init());
+    modules.Set(v8::String::NewFromUtf8("querystring"), builtin::path::Init());
+    modules.Set(v8::String::NewFromUtf8("readline"), builtin::readline::Init());
+    modules.Set(v8::String::NewFromUtf8("repl"), builtin::repl::Init());
+    modules.Set(v8::String::NewFromUtf8("tls"), builtin::tls::Init());
+    modules.Set(v8::String::NewFromUtf8("url"), builtin::url::Init());
 
+    global.Set(v8::String::NewFromUtf8("_modules"), modules);
     global.Set(v8::String::NewFromUtf8("process"), builtin::process::Setup(process));
-    global.Set(v8::String::NewFromUtf8("require"), builtin::module::Setup(modules));
+    global.Set(v8::String::NewFromUtf8("require"), builtin::module::Setup());
     global.Set(v8::String::NewFromUtf8("println"), v8::FunctionTemplate::New(println).GetFunction());
 
     let source = Commander::GetSource();

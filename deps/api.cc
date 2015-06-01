@@ -299,6 +299,16 @@ Local<String> v8_value_to_string(Value **val) {
 }
 
 /**
+ * call val->ToObject()
+ * @method v8_value_to_string
+ * @param {Value} this
+ * @return {String} the result
+ */
+Local<Object> v8_value_to_object(Value **val) {
+  return (*val)->ToObject();
+}
+
+/**
  * call val->Int32Value()
  * @method v8_value_as_int32
  * @param {Value} this

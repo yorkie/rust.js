@@ -38,6 +38,7 @@ extern {
   fn v8_value_to_string(this: &Value) -> String;
   fn v8_value_to_number(this: &Value) -> Number;
   fn v8_value_to_integer(this: &Value) -> Integer;
+  fn v8_value_to_object(this: &Value) -> Object;
   fn v8_value_as_int32(this: &Value) -> i32;
   fn v8_value_as_int64(this: &Value) -> i64;
   fn v8_value_as_uint32(this: &Value) -> u32;
@@ -100,6 +101,10 @@ macro_rules! value_method(
       #[inline(always)]
       pub fn ToInteger(&self) -> Integer {
         unsafe { v8_value_to_integer(self.as_val()) }
+      }
+      #[inline(always)]
+      pub fn ToObject(&self) -> Object {
+        unsafe { v8_value_to_object(self.as_val()) }
       }
       #[inline(always)]
       pub fn Int32Value(&self) -> i32 {

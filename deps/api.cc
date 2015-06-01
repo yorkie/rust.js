@@ -300,9 +300,9 @@ Local<String> v8_value_to_string(Value **val) {
 
 /**
  * call val->ToObject()
- * @method v8_value_to_string
+ * @method v8_value_to_object
  * @param {Value} this
- * @return {String} the result
+ * @return {Object} the result
  */
 Local<Object> v8_value_to_object(Value **val) {
   return (*val)->ToObject();

@@ -65,7 +65,14 @@ extern fn stat(arguments: v8::FunctionCallbackInfo) {
 }
 
 extern fn readdir(arguments: v8::FunctionCallbackInfo) {
-  // TODO
+  let path = arguments.At(0).ToString().as_string();
+  let retval = arguments.GetReturnValue();
+  match fs::read_dir(path) {
+    Ok(dir) => {
+      retval.Set(v8::Number::New(dir.count()))
+    },
+    Err(e) => retval.SetWithBool(false)
+  }
 }
 
 extern fn readFile(arguments: v8::FunctionCallbackInfo) {

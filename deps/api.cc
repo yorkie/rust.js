@@ -379,6 +379,10 @@ char * v8_string_as_string(String **str) {
  * @class Number
  */
 
+Local<Number> v8_number_new(uint64_t n) {
+  return Number::New(isolate, n);
+}
+
 /**
  * The Integer class
  * @class Integer

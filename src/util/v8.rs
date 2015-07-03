@@ -47,6 +47,8 @@ extern {
   fn v8_string_empty(this: &String) -> String;
   fn v8_string_as_string(this: &String) -> *const libc::c_char;
 
+  fn v8_number_new(n: u64) -> Number;
+
   fn v8_object_new() -> Object;
   fn v8_object_get(this: &Object, key: &Value) -> Value;
   fn v8_object_set(this: &Object, key: &Value, val: &Value) -> bool;
@@ -235,6 +237,12 @@ impl String {
 #[repr(C)]
 pub struct Number(*mut *mut Number);
 value_method!(Number);
+
+impl Number {
+  pub fn New(n: u64) -> Number {
+    unsafe { v8_number_new(n) }
+  }
+}
 
 #[repr(C)]
 pub struct Integer(*mut *mut Integer);

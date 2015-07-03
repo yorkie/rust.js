@@ -37,10 +37,11 @@ POSITIONAL ARGUMENTS:
     INPUT      main script file
 ```
 
-Worked modules
+Working modules
 --------------
 
 - [`path`](src/builtin/path.rs)
+- [`fs`](src/builtin/fs.rs)
 
 
 License

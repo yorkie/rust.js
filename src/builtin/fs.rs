@@ -21,10 +21,24 @@ extern fn chown(arguments: v8::FunctionCallbackInfo) {
 }
 
 extern fn rmdir(arguments: v8::FunctionCallbackInfo) {
-  // TODO
+  let path = arguments.At(0).ToString().as_string();
+  let retval = arguments.GetReturnValue();
+  match fs::remove_dir(path) {
+    Ok(()) => retval.Set(arguments.At(0).ToString()),
+    Err(e) => retval.SetWithBool(false)
+  }
 }
 
 extern fn mkdir(arguments: v8::FunctionCallbackInfo) {
+  let path = arguments.At(0).ToString().as_string();
+  let retval = arguments.GetReturnValue();
+  match fs::create_dir(path) {
+    Ok(()) => retval.Set(arguments.At(0).ToString()),
+    Err(e) => retval.SetWithBool(false)
+  }
+}
+
+extern fn stat(arguments: v8::FunctionCallbackInfo) {
   // TODO
 }
 

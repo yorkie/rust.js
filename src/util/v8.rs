@@ -47,7 +47,12 @@ extern {
   fn v8_string_empty(this: &String) -> String;
   fn v8_string_as_string(this: &String) -> *const libc::c_char;
 
-  fn v8_number_new(n: u64) -> Number;
+  fn v8_number_new_from_u16(n: u16) -> Number;
+  fn v8_number_new_from_u32(n: u32) -> Number;
+  fn v8_number_new_from_u64(n: u64) -> Number;
+  fn v8_number_new_from_i16(n: i16) -> Number;
+  fn v8_number_new_from_i32(n: i32) -> Number;
+  fn v8_number_new_from_i64(n: i64) -> Number;
 
   fn v8_object_new() -> Object;
   fn v8_object_get(this: &Object, key: &Value) -> Value;
@@ -239,8 +244,23 @@ pub struct Number(*mut *mut Number);
 value_method!(Number);
 
 impl Number {
-  pub fn New(n: u64) -> Number {
-    unsafe { v8_number_new(n) }
+  pub fn NewFromUInt16(n: u16) -> Number {
+    unsafe { v8_number_new_from_u16(n) }
+  }
+  pub fn NewFromUInt32(n: u32) -> Number {
+    unsafe { v8_number_new_from_u32(n) }
+  }
+  pub fn NewFromUInt64(n: u64) -> Number {
+    unsafe { v8_number_new_from_u64(n) }
+  }
+  pub fn NewFromInt16(n: i16) -> Number {
+    unsafe { v8_number_new_from_i16(n) }
+  }
+  pub fn NewFromInt32(n: i32) -> Number {
+    unsafe { v8_number_new_from_i32(n) }
+  }
+  pub fn NewFromInt64(n: i64) -> Number {
+    unsafe { v8_number_new_from_i64(n) }
   }
 }
 

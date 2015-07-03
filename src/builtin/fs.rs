@@ -1,6 +1,6 @@
 
 use std::fs;
-use std::os::unix::fs;
+use std::os::unix::fs::MetadataExt;
 use util::v8;
 
 extern fn rename(arguments: v8::FunctionCallbackInfo) {
@@ -45,19 +45,19 @@ extern fn stat(arguments: v8::FunctionCallbackInfo) {
   match fs::metadata(path) {
     Ok(meta) => {
       let obj = v8::Object::New();
-      obj.Set(v8::String::NewFromUtf8("dev"), v8::Number::New(meta.dev()));
-      obj.Set(v8::String::NewFromUtf8("ino"), v8::Number::New(meta.ino()));
-      obj.Set(v8::String::NewFromUtf8("mode"), v8::Number::New(meta.mode()));
-      obj.Set(v8::String::NewFromUtf8("nlink"), v8::Number::New(meta.nlink()));
-      obj.Set(v8::String::NewFromUtf8("uid"), v8::Number::New(meta.uid()));
-      obj.Set(v8::String::NewFromUtf8("gid"), v8::Number::New(meta.gid()));
-      obj.Set(v8::String::NewFromUtf8("rdev"), v8::Number::New(meta.rdev()));
-      obj.Set(v8::String::NewFromUtf8("size"), v8::Number::New(meta.size()));
-      obj.Set(v8::String::NewFromUtf8("blksize"), v8::Number::New(meta.blksize()));
-      obj.Set(v8::String::NewFromUtf8("blocks"), v8::Number::New(meta.blocks()));
-      obj.Set(v8::String::NewFromUtf8("atime"), v8::Number::New(meta.atime()));
-      obj.Set(v8::String::NewFromUtf8("mtime"), v8::Number::New(meta.mtime()));
-      obj.Set(v8::String::NewFromUtf8("ctime"), v8::Number::New(meta.ctime()));
+      obj.Set(v8::String::NewFromUtf8("dev"), v8::Number::NewFromInt32(meta.dev()));
+      obj.Set(v8::String::NewFromUtf8("ino"), v8::Number::NewFromUInt64(meta.ino()));
+      obj.Set(v8::String::NewFromUtf8("mode"), v8::Number::NewFromUInt16(meta.mode()));
+      obj.Set(v8::String::NewFromUtf8("nlink"), v8::Number::NewFromUInt16(meta.nlink()));
+      obj.Set(v8::String::NewFromUtf8("uid"), v8::Number::NewFromUInt32(meta.uid()));
+      obj.Set(v8::String::NewFromUtf8("gid"), v8::Number::NewFromUInt32(meta.gid()));
+      obj.Set(v8::String::NewFromUtf8("rdev"), v8::Number::NewFromInt32(meta.rdev()));
+      obj.Set(v8::String::NewFromUtf8("size"), v8::Number::NewFromInt64(meta.size()));
+      obj.Set(v8::String::NewFromUtf8("blksize"), v8::Number::NewFromInt32(meta.blksize()));
+      obj.Set(v8::String::NewFromUtf8("blocks"), v8::Number::NewFromInt64(meta.blocks()));
+      obj.Set(v8::String::NewFromUtf8("atime"), v8::Number::NewFromInt64(meta.atime()));
+      obj.Set(v8::String::NewFromUtf8("mtime"), v8::Number::NewFromInt64(meta.mtime()));
+      obj.Set(v8::String::NewFromUtf8("ctime"), v8::Number::NewFromInt64(meta.ctime()));
       retval.Set(obj);
     },
     Err(e) => retval.SetWithBool(false)
@@ -69,7 +69,7 @@ extern fn readdir(arguments: v8::FunctionCallbackInfo) {
   let retval = arguments.GetReturnValue();
   match fs::read_dir(path) {
     Ok(dir) => {
-      retval.Set(v8::Number::New(dir.count()))
+      retval.Set(v8::Number::NewFromInt32(10))
     },
     Err(e) => retval.SetWithBool(false)
   }

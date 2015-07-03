@@ -379,7 +379,27 @@ char * v8_string_as_string(String **str) {
  * @class Number
  */
 
-Local<Number> v8_number_new(uint64_t n) {
+Local<Number> v8_number_new_from_u16(uint16_t n) {
+  return Number::New(isolate, n);
+}
+
+Local<Number> v8_number_new_from_u32(uint32_t n) {
+  return Number::New(isolate, n);
+}
+
+Local<Number> v8_number_new_from_u64(uint64_t n) {
+  return Number::New(isolate, n);
+}
+
+Local<Number> v8_number_new_from_i16(int16_t n) {
+  return Number::New(isolate, n);
+}
+
+Local<Number> v8_number_new_from_i32(int32_t n) {
+  return Number::New(isolate, n);
+}
+
+Local<Number> v8_number_new_from_i64(int64_t n) {
   return Number::New(isolate, n);
 }
 

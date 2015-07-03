@@ -46,7 +46,18 @@ extern fn stat(arguments: v8::FunctionCallbackInfo) {
     Ok(meta) => {
       let obj = v8::Object::New();
       obj.Set(v8::String::NewFromUtf8("dev"), v8::Number::New(meta.dev()));
-      obj.Set(v8::String::NewFromUtf8("size"), v8::Number::New(meta.len()));
+      obj.Set(v8::String::NewFromUtf8("ino"), v8::Number::New(meta.ino()));
+      obj.Set(v8::String::NewFromUtf8("mode"), v8::Number::New(meta.mode()));
+      obj.Set(v8::String::NewFromUtf8("nlink"), v8::Number::New(meta.nlink()));
+      obj.Set(v8::String::NewFromUtf8("uid"), v8::Number::New(meta.uid()));
+      obj.Set(v8::String::NewFromUtf8("gid"), v8::Number::New(meta.gid()));
+      obj.Set(v8::String::NewFromUtf8("rdev"), v8::Number::New(meta.rdev()));
+      obj.Set(v8::String::NewFromUtf8("size"), v8::Number::New(meta.size()));
+      obj.Set(v8::String::NewFromUtf8("blksize"), v8::Number::New(meta.blksize()));
+      obj.Set(v8::String::NewFromUtf8("blocks"), v8::Number::New(meta.blocks()));
+      obj.Set(v8::String::NewFromUtf8("atime"), v8::Number::New(meta.atime()));
+      obj.Set(v8::String::NewFromUtf8("mtime"), v8::Number::New(meta.mtime()));
+      obj.Set(v8::String::NewFromUtf8("ctime"), v8::Number::New(meta.ctime()));
       retval.Set(obj);
     },
     Err(e) => retval.SetWithBool(false)

@@ -4,6 +4,7 @@ pub mod console;
 pub mod crypto;
 pub mod datagram;
 pub mod dns;
+pub mod events;
 pub mod fs;
 pub mod http;
 pub mod https;

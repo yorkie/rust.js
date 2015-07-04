@@ -7,6 +7,10 @@ use std::string;
 use std::ffi::CString;
 use std::ffi::CStr;
 
+use std::fs::File;
+use std::io::Read;
+use std::str;
+
 extern {
   fn v8_free_platform() -> bool;
   fn v8_initialize_platform() -> bool;
@@ -32,9 +36,14 @@ extern {
   fn v8_context_scope(closure: extern fn());
 
   fn v8_script_compile(source: &[u8]) -> Script;
-  fn v8_script_run(this: &Script);
+  fn v8_script_compile_with_filename(
+    source  : *const libc::c_char,
+    path    : *const libc::c_char
+  ) -> Script;
+  fn v8_script_run(this: &Script) -> Value;
 
   fn v8_value_is_string(this: &Value) -> bool;
+  fn v8_value_is_function(this: &Value) -> bool;
   fn v8_value_to_string(this: &Value) -> String;
   fn v8_value_to_number(this: &Value) -> Number;
   fn v8_value_to_integer(this: &Value) -> Integer;
@@ -63,7 +72,8 @@ extern {
   fn v8_array_set(this: &Array, key: &Value, val: &Value) -> bool;
   fn v8_array_push(this: &Array, val: &Value) -> bool;
 
-  fn v8_function_call(this: &Function, global: &Value, argv: &[Value]) -> Value;
+  fn v8_function_cast(fval: &Value) -> Function;
+  fn v8_function_call(this: &Function, global: &Value, argv: &[&Value]) -> Value;
   fn v8_function_callback_info_length(this: &FunctionCallbackInfo) -> i64;
   fn v8_function_callback_info_at(this: &FunctionCallbackInfo, index: i32) -> Value;
   fn v8_function_callback_info_this(this: &FunctionCallbackInfo) -> Object;
@@ -111,6 +121,20 @@ macro_rules! v8_try {
   })
 }
 
+macro_rules! v8_try_slient {
+  ($expr:expr) => ({
+    let ret;
+    match $expr {
+      Ok(val) => {
+        ret = Some(val);
+      },
+      Err(err) => {
+        ret = None;
+      }
+    };
+    ret.unwrap()
+  })
+}
 
 macro_rules! value_method(
   ($ty:ident) => (
@@ -118,6 +142,10 @@ macro_rules! value_method(
       #[inline(always)]
       pub fn IsString(&self) -> bool {
         unsafe { v8_value_is_string(self.as_val()) }
+      }
+      #[inline(always)]
+      pub fn IsFunction(&self) -> bool {
+        unsafe { v8_value_is_function(self.as_val()) }
       }
       #[inline(always)]
       pub fn ToString(&self) -> String {
@@ -229,7 +257,19 @@ impl Script {
   pub fn Compile(data: &[u8]) -> Script {
     unsafe { v8_script_compile(data) }
   }
-  pub fn Run(&self) {
+  pub fn CompileWithFile(path: &str) -> Script {
+    let mut f = v8_try_slient!(File::open(path));
+    let mut s = string::String::new();
+    v8_try_slient!(f.read_to_string(&mut s));
+    let data = v8_try_slient!(str::from_utf8(s.as_bytes()));
+    let c_pdata = CString::new(data).unwrap();
+    let c_ppath = CString::new(path).unwrap();
+    unsafe { 
+      v8_script_compile_with_filename(
+        c_pdata.as_ptr(), c_ppath.as_ptr())
+    }
+  }
+  pub fn Run(&self) -> Value {
     unsafe { v8_script_run(self) }
   }
 }
@@ -324,7 +364,10 @@ pub struct Function(*mut *mut Function);
 value_method!(Function);
 
 impl Function {
-  pub fn Call<T: ValueT>(&self, recv: T, argv: &[Value]) -> Value {
+  pub fn Cast(fval: &Value) -> Function {
+    unsafe { v8_function_cast(fval) }
+  }
+  pub fn Call<T: ValueT>(&self, recv: T, argv: &[&Value]) -> Value {
     unsafe { v8_function_call(self, recv.as_val(), argv) }
   }
 }

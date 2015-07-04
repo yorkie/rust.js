@@ -32,6 +32,7 @@ pub fn new_instance() -> i32 {
     modules.Set(v8::String::NewFromUtf8("crypto"), builtin::crypto::Init());
     modules.Set(v8::String::NewFromUtf8("datagram"), builtin::datagram::Init());
     modules.Set(v8::String::NewFromUtf8("dns"), builtin::dns::Init());
+    modules.Set(v8::String::NewFromUtf8("events"), builtin::events::Init());
     modules.Set(v8::String::NewFromUtf8("fs"), builtin::fs::Init());
     modules.Set(v8::String::NewFromUtf8("http"), builtin::http::Init());
     modules.Set(v8::String::NewFromUtf8("https"), builtin::https::Init());

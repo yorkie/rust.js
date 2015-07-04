@@ -40,8 +40,6 @@ static ArrayBufferAllocator array_buffer_allocator;
 
 // The global isolate
 Isolate *isolate;
-// The global try catch
-TryCatch try_catch;
 // The global context
 Local<Context> context;
 
@@ -244,13 +242,34 @@ Local<Script> v8_script_compile(char *data) {
 }
 
 /**
+ * Compiles the specified script using the specified file 
+ * name object (typically a string) as the script's origin. 
+ * @method v8_script_compile_with_filename
+ * @param {char *} data - The source of script
+ * @param {char *} path - the file path
+ * @return {Script} the compiled script object
+ */
+Local<Script> v8_script_compile_with_filename(char *data, char*path) {
+  Local<String> source = String::NewFromUtf8(isolate, data);
+  Local<String> filename = String::NewFromUtf8(isolate, path);
+  Local<Script> script = Script::Compile(source, filename);
+  return script;
+}
+
+/**
  * run the script
  * @method v8_script_run
  * @param {Script} this
  * @return {Value} the result
  */
 Local<Value> v8_script_run(Script **script) {
-  return (*script)->Run();
+  TryCatch try_catch;
+  Local<Value> val = (*script)->Run();
+  if (try_catch.HasCaught()) {
+    String::Utf8Value msg(try_catch.Exception());
+    printf("%s\n", *msg);
+  }
+  return val;
 }
 
 /**
@@ -266,6 +285,16 @@ Local<Value> v8_script_run(Script **script) {
  */
 bool v8_value_is_string(Value **val) {
   return (*val)->IsString();
+}
+
+/**
+ * check the value if it's a function
+ * @method v8_value_is_function
+ * @param {Value} this
+ * @return {bool} the result
+ */
+bool v8_value_is_function(Value **val) {
+  return (*val)->IsFunction();
 }
 
 /**
@@ -478,6 +507,10 @@ bool v8_array_push(Array **arr, Local<Value> *val) {
  * The Function class
  * @class Function
  */
+
+Local<Function> v8_function_cast(Local<Value> *fval) {
+  return Local<Function>::Cast(*fval);
+}
 
 /**
  * call the function with global and args

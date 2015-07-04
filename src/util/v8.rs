@@ -41,6 +41,7 @@ extern {
     path    : *const libc::c_char
   ) -> Script;
   fn v8_script_run(this: &Script) -> Value;
+  fn v8_script_is_empty(this: &Script) -> bool;
 
   fn v8_value_is_string(this: &Value) -> bool;
   fn v8_value_is_function(this: &Value) -> bool;
@@ -271,6 +272,9 @@ impl Script {
   }
   pub fn Run(&self) -> Value {
     unsafe { v8_script_run(self) }
+  }
+  pub fn IsEmpty(&self) -> bool {
+    unsafe { v8_script_is_empty(self) }
   }
 }
 

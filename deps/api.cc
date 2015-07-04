@@ -273,6 +273,16 @@ Local<Value> v8_script_run(Script **script) {
 }
 
 /**
+ * check script is empty
+ * @method v8_script_is_empty
+ * @param {Script} this
+ * @return {bool}
+ */
+bool v8_script_is_empty(Local<Script> *script) {
+  return (*script).IsEmpty();
+}
+
+/**
  * The value class
  * @class Value
  */

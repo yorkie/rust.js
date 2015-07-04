@@ -1,5 +1,8 @@
 use std::fs;
+use std::fs::File;
+use std::io::Read;
 use std::os::unix::fs::MetadataExt;
+use std::str;
 use std::path::Path;
 use std::path::MAIN_SEPARATOR;
 use util::v8;
@@ -60,7 +63,14 @@ extern fn readdir(arguments: v8::FunctionCallbackInfo) {
 }
 
 extern fn readFile(arguments: v8::FunctionCallbackInfo) {
-  // TODO
+  let path = arguments.At(0).ToString().as_string();
+  let mut f = v8_try!(File::open(path), arguments);
+  let mut s = String::new();
+  v8_try!(f.read_to_string(&mut s), arguments);
+
+  let val = v8_try!(str::from_utf8(s.as_bytes()), arguments);
+  let ret = v8::String::NewFromUtf8(val);
+  arguments.GetReturnValue().Set(ret);
 }
 
 extern fn writeFile(arguments: v8::FunctionCallbackInfo) {

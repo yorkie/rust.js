@@ -10,3 +10,7 @@ println(JSON.stringify(stat));
 fs.readdir('./').forEach(function (p) {
   println(p)
 });
+
+// fs.readFile
+var dat = fs.readFile('./makefile');
+println(dat);

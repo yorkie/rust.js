@@ -676,4 +676,18 @@ Local<Object> v8_function_tmpl_new_instance(FunctionTemplate **ft) {
   return (*ft)->GetFunction()->NewInstance();
 }
 
+/**
+ * utilities
+ */
+
+bool utils_is_big_endian() {
+  const union {
+    uint8_t u8[2];
+    uint16_t u16;
+  } u = {
+    { 1, 0 }
+  };
+  return u.u16 == 1 ? false : true;
+}
+
 }

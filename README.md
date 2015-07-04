@@ -42,6 +42,7 @@ Working modules
 
 - [`path`](src/builtin/path.rs)
 - [`fs`](src/builtin/fs.rs)
+- [`os`](src/builtin/os.rs)
 
 
 License

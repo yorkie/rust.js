@@ -521,7 +521,12 @@ Local<Function> v8_function_cast(Local<Value> *fval) {
  * @return {Value} the result
  */
 Local<Value> v8_function_call(Function **func, Local<Value> global, Local<Value> **argv) {
-  return (*func)->Call(global, 2, *argv);
+  int32_t count = sizeof(argv) / sizeof(Local<Value>*);
+  Local<Value> *args = new Local<Value>[count];
+  for (int32_t i = 0; i < count; i++) {
+    args[i] = *argv[i];
+  }
+  return (*func)->Call(global, count, args);
 }
 
 /**

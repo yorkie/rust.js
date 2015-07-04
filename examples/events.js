@@ -1,5 +1,5 @@
 
-var events = require('events');
+var EventEmitter = require('events').EventEmitter;
 
-println(JSON.stringify(events));
-throw new Error('haha');
+println(EventEmitter);
+// throw new Error('haha');

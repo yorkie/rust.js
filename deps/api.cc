@@ -446,6 +446,35 @@ bool v8_object_set(Object **object, Local<Value> *key, Local<Value> *val) {
 }
 
 /**
+ * The Array class
+ * @class Array
+ */
+Local<Array> v8_array_new() {
+  return Array::New(isolate);
+}
+
+Local<Value> v8_array_get(Array **arr, Local<Value> *key) {
+  return (*arr)->Get(*key);
+}
+
+bool v8_array_set(Array **arr, Local<Value> *key, Local<Value> *val) {
+  return (*arr)->Set(*key, *val);
+}
+
+bool v8_array_push(Array **arr, Local<Value> *val) {
+  Local<String> key = String::NewFromUtf8(isolate, "push");
+  Local<Value> func = (*arr)->Get(key);
+  if (func->IsFunction()) {
+    Local<Function> push = func.As<Function>();
+    Local<Value> argv[1] = { *val };
+    push->Call((*arr)->ToObject(), 1, argv);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+/**
  * The Function class
  * @class Function
  */

@@ -58,6 +58,11 @@ extern {
   fn v8_object_get(this: &Object, key: &Value) -> Value;
   fn v8_object_set(this: &Object, key: &Value, val: &Value) -> bool;
 
+  fn v8_array_new() -> Array;
+  fn v8_array_get(this: &Array, key: &Value) -> Value;
+  fn v8_array_set(this: &Array, key: &Value, val: &Value) -> bool;
+  fn v8_array_push(this: &Array, val: &Value) -> bool;
+
   fn v8_function_call(this: &Function, global: &Value, argv: &[Value]) -> Value;
   fn v8_function_callback_info_length(this: &FunctionCallbackInfo) -> i64;
   fn v8_function_callback_info_at(this: &FunctionCallbackInfo, index: i32) -> Value;
@@ -281,6 +286,19 @@ impl Object {
   }
   pub fn Set<K:IndexT, V:ValueT>(&self, key: K, value: V) -> bool {
     key.set(self, value.as_val())
+  }
+}
+
+#[repr(C)]
+pub struct Array(*mut *mut Array);
+value_method!(Array);
+
+impl Array {
+  pub fn New() -> Array {
+    unsafe { v8_array_new() }
+  }
+  pub fn push<V:ValueT>(&self, val: V) -> bool {
+    unsafe { v8_array_push(self, val.as_val()) }
   }
 }
 

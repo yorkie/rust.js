@@ -1,6 +1,8 @@
 
 use std::fs;
 use std::os::unix::fs::MetadataExt;
+use std::path::Path;
+use std::path::MAIN_SEPARATOR;
 use util::v8;
 
 extern fn rename(arguments: v8::FunctionCallbackInfo) {
@@ -11,10 +13,6 @@ extern fn rename(arguments: v8::FunctionCallbackInfo) {
     Ok(()) => retval.SetWithBool(true),
     Err(e) => retval.SetWithBool(false)
   }
-}
-
-extern fn truncate(arguments: v8::FunctionCallbackInfo) {
-  // TODO
 }
 
 extern fn chown(arguments: v8::FunctionCallbackInfo) {
@@ -69,7 +67,8 @@ extern fn readdir(arguments: v8::FunctionCallbackInfo) {
   let retval = arguments.GetReturnValue();
   match fs::read_dir(path) {
     Ok(dir) => {
-      retval.Set(v8::Number::NewFromInt32(10))
+      let arr = v8::Array::New();
+      retval.Set(arr);
     },
     Err(e) => retval.SetWithBool(false)
   }
@@ -86,7 +85,6 @@ extern fn writeFile(arguments: v8::FunctionCallbackInfo) {
 pub fn Init() -> v8::Object {
   let exports = v8::Object::New();
   exports.Set(v8::String::NewFromUtf8("rename"), v8::FunctionTemplate::New(rename).GetFunction());
-  exports.Set(v8::String::NewFromUtf8("truncate"), v8::FunctionTemplate::New(truncate).GetFunction());
   exports.Set(v8::String::NewFromUtf8("chown"), v8::FunctionTemplate::New(chown).GetFunction());
   exports.Set(v8::String::NewFromUtf8("rmdir"), v8::FunctionTemplate::New(rmdir).GetFunction());
   exports.Set(v8::String::NewFromUtf8("mkdir"), v8::FunctionTemplate::New(mkdir).GetFunction());

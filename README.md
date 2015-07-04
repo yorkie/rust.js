@@ -40,9 +40,9 @@ POSITIONAL ARGUMENTS:
 Working modules
 --------------
 
-- [`path`](src/builtin/path.rs)
-- [`fs`](src/builtin/fs.rs)
-- [`os`](src/builtin/os.rs)
+- [`path`](src/builtin/path.rs) This module contains utilities for handling and transforming file paths.
+- [`fs`](src/builtin/fs.rs) File I/O is provided by simple wrappers around standard POSIX functions.
+- [`os`](src/builtin/os.rs) Provides a few basic operating-system related utility functions.
 
 
 License

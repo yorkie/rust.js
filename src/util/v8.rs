@@ -95,6 +95,23 @@ pub trait ValueT {
   fn as_val(&self) -> &Value;
 }
 
+macro_rules! v8_try {
+  ($expr:expr, $args:ident) => ({
+    let ret;
+    match $expr {
+      Ok(val) => {
+        ret = Some(val);
+      },
+      Err(err) => {
+        ret = None;
+        $args.GetReturnValue().SetWithBool(false)
+      }
+    };
+    ret.unwrap()
+  })
+}
+
+
 macro_rules! value_method(
   ($ty:ident) => (
     impl $ty {

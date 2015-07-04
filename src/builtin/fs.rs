@@ -1,4 +1,3 @@
-
 use std::fs;
 use std::os::unix::fs::MetadataExt;
 use std::path::Path;
@@ -8,11 +7,8 @@ use util::v8;
 extern fn rename(arguments: v8::FunctionCallbackInfo) {
   let oldpath = arguments.At(0).ToString().as_string();
   let newpath = arguments.At(1).ToString().as_string();
-  let retval = arguments.GetReturnValue();
-  match fs::rename(oldpath, newpath) {
-    Ok(()) => retval.SetWithBool(true),
-    Err(e) => retval.SetWithBool(false)
-  }
+  v8_try!(fs::rename(oldpath, newpath), arguments);
+  arguments.GetReturnValue().SetWithBool(true);
 }
 
 extern fn chown(arguments: v8::FunctionCallbackInfo) {
@@ -21,57 +17,46 @@ extern fn chown(arguments: v8::FunctionCallbackInfo) {
 
 extern fn rmdir(arguments: v8::FunctionCallbackInfo) {
   let path = arguments.At(0).ToString().as_string();
-  let retval = arguments.GetReturnValue();
-  match fs::remove_dir(path) {
-    Ok(()) => retval.Set(arguments.At(0).ToString()),
-    Err(e) => retval.SetWithBool(false)
-  }
+  v8_try!(fs::remove_dir(path), arguments);
+  arguments.GetReturnValue().Set(arguments.At(0).ToString());
 }
 
 extern fn mkdir(arguments: v8::FunctionCallbackInfo) {
   let path = arguments.At(0).ToString().as_string();
-  let retval = arguments.GetReturnValue();
-  match fs::create_dir(path) {
-    Ok(()) => retval.Set(arguments.At(0).ToString()),
-    Err(e) => retval.SetWithBool(false)
-  }
+  v8_try!(fs::create_dir(path), arguments);
+  arguments.GetReturnValue().Set(arguments.At(0).ToString());
 }
 
 extern fn stat(arguments: v8::FunctionCallbackInfo) {
   let path = arguments.At(0).ToString().as_string();
-  let retval = arguments.GetReturnValue();
-  match fs::metadata(path) {
-    Ok(meta) => {
-      let obj = v8::Object::New();
-      obj.Set(v8::String::NewFromUtf8("dev"), v8::Number::NewFromInt32(meta.dev()));
-      obj.Set(v8::String::NewFromUtf8("ino"), v8::Number::NewFromUInt64(meta.ino()));
-      obj.Set(v8::String::NewFromUtf8("mode"), v8::Number::NewFromUInt16(meta.mode()));
-      obj.Set(v8::String::NewFromUtf8("nlink"), v8::Number::NewFromUInt16(meta.nlink()));
-      obj.Set(v8::String::NewFromUtf8("uid"), v8::Number::NewFromUInt32(meta.uid()));
-      obj.Set(v8::String::NewFromUtf8("gid"), v8::Number::NewFromUInt32(meta.gid()));
-      obj.Set(v8::String::NewFromUtf8("rdev"), v8::Number::NewFromInt32(meta.rdev()));
-      obj.Set(v8::String::NewFromUtf8("size"), v8::Number::NewFromInt64(meta.size()));
-      obj.Set(v8::String::NewFromUtf8("blksize"), v8::Number::NewFromInt32(meta.blksize()));
-      obj.Set(v8::String::NewFromUtf8("blocks"), v8::Number::NewFromInt64(meta.blocks()));
-      obj.Set(v8::String::NewFromUtf8("atime"), v8::Number::NewFromInt64(meta.atime()));
-      obj.Set(v8::String::NewFromUtf8("mtime"), v8::Number::NewFromInt64(meta.mtime()));
-      obj.Set(v8::String::NewFromUtf8("ctime"), v8::Number::NewFromInt64(meta.ctime()));
-      retval.Set(obj);
-    },
-    Err(e) => retval.SetWithBool(false)
-  }
+  let meta = v8_try!(fs::metadata(path), arguments);
+  let obj = v8::Object::New();
+  obj.Set(v8::String::NewFromUtf8("dev"), v8::Number::NewFromInt32(meta.dev()));
+  obj.Set(v8::String::NewFromUtf8("ino"), v8::Number::NewFromUInt64(meta.ino()));
+  obj.Set(v8::String::NewFromUtf8("mode"), v8::Number::NewFromUInt16(meta.mode()));
+  obj.Set(v8::String::NewFromUtf8("nlink"), v8::Number::NewFromUInt16(meta.nlink()));
+  obj.Set(v8::String::NewFromUtf8("uid"), v8::Number::NewFromUInt32(meta.uid()));
+  obj.Set(v8::String::NewFromUtf8("gid"), v8::Number::NewFromUInt32(meta.gid()));
+  obj.Set(v8::String::NewFromUtf8("rdev"), v8::Number::NewFromInt32(meta.rdev()));
+  obj.Set(v8::String::NewFromUtf8("size"), v8::Number::NewFromInt64(meta.size()));
+  obj.Set(v8::String::NewFromUtf8("blksize"), v8::Number::NewFromInt32(meta.blksize()));
+  obj.Set(v8::String::NewFromUtf8("blocks"), v8::Number::NewFromInt64(meta.blocks()));
+  obj.Set(v8::String::NewFromUtf8("atime"), v8::Number::NewFromInt64(meta.atime()));
+  obj.Set(v8::String::NewFromUtf8("mtime"), v8::Number::NewFromInt64(meta.mtime()));
+  obj.Set(v8::String::NewFromUtf8("ctime"), v8::Number::NewFromInt64(meta.ctime()));
+  arguments.GetReturnValue().Set(obj);
 }
 
 extern fn readdir(arguments: v8::FunctionCallbackInfo) {
   let path = arguments.At(0).ToString().as_string();
-  let retval = arguments.GetReturnValue();
-  match fs::read_dir(path) {
-    Ok(dir) => {
-      let arr = v8::Array::New();
-      retval.Set(arr);
-    },
-    Err(e) => retval.SetWithBool(false)
+  let dir = v8_try!(fs::read_dir(path), arguments);
+  let ret = v8::Array::New();
+  for entry in dir {
+    let entry = v8_try!(entry, arguments);
+    let path = entry.path();
+    ret.push(v8::String::NewFromUtf8(path.to_str().unwrap()));
   }
+  arguments.GetReturnValue().Set(ret);
 }
 
 extern fn readFile(arguments: v8::FunctionCallbackInfo) {

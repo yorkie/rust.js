@@ -44,7 +44,7 @@ Working modules
 - [`fs`](src/builtin/fs.rs) File I/O is provided by simple wrappers around standard POSIX functions.
 - [`os`](src/builtin/os.rs) Provides a few basic operating-system related utility functions.
 - [`events`](src/builtin/events.js) Many objects in rust.js emit events.
-
+- [`util`](src/builtin/util.js) These functions are in the module 'util'.
 
 License
 -------------

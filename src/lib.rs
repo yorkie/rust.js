@@ -44,6 +44,7 @@ pub fn new_instance() -> i32 {
     modules.Set(v8::String::NewFromUtf8("repl"), builtin::repl::Init());
     modules.Set(v8::String::NewFromUtf8("tls"), builtin::tls::Init());
     modules.Set(v8::String::NewFromUtf8("url"), builtin::url::Init());
+    modules.Set(v8::String::NewFromUtf8("util"), builtin::util::Init());
 
     global.Set(v8::String::NewFromUtf8("_modules"), modules);
     global.Set(v8::String::NewFromUtf8("process"), builtin::process::Setup(process));

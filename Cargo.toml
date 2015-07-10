@@ -10,9 +10,10 @@ name = "rustjs"
 path = "src/lib.rs"
 
 [dependencies]
-env_logger  = "0.3.0"
-libc        = "0.1.7"
-clap        = "*"
+rustc-serialize = "0.3"
+env_logger      = "0.3.0"
+libc            = "0.1.7"
+clap            = "*"
 
 [[bin]]
 name = "rustjs"

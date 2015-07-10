@@ -45,6 +45,7 @@ Working modules
 - [`os`](src/builtin/os.rs) Provides a few basic operating-system related utility functions.
 - [`events`](src/builtin/events.js) Many objects in rust.js emit events.
 - [`util`](src/builtin/util.js) These functions are in the module 'util'.
+- [`buffer`](src/builtin/buffer.rs) Pure JavaScript is Unicode friendly but not nice to binary data.
 
 License
 -------------

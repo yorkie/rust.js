@@ -25,12 +25,17 @@ impl StringBytes {
   }
   pub fn decode(&self, encoding: Encoding) -> Vec<u8> {
     match encoding {
-      BASE64 => self.source.as_bytes().from_base64().unwrap()
-      // HEX => self.source.as_bytes().from_hex().unwrap(),
+      Encoding::Base64 => self.source.as_bytes().from_base64().unwrap(),
+      Encoding::Hex => self.source.from_hex().unwrap(),
+      _ => Vec::new()
     }
   }
-  pub fn encode(&self, encoding: Encoding) {
-    // TODO
+  pub fn encode(&self, encoding: Encoding) -> String {
+    match encoding {
+      Encoding::Base64 => self.source.as_bytes().to_base64(STANDARD),
+      Encoding::Hex => self.source.as_bytes().to_hex(),
+      _ => String::new()
+    }
   }
 }
 

@@ -268,7 +268,7 @@ impl Script {
     let mut s = string::String::new();
     
     // wrap the library
-    s.push_str("(function(exports, module, __dirname){");
+    s.push_str("(function(exports, module, __dirname, __filename){");
     v8_try_slient!(f.read_to_string(&mut s));
     s.push_str("})");
 

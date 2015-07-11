@@ -458,6 +458,14 @@ Local<Number> v8_number_new_from_i64(int64_t n) {
  */
 
 /**
+ * The Boolean class
+ * @class Boolean
+ */
+bool v8_boolean_value(Boolean **val) {
+  return (*val)->Value();
+}
+
+/**
  * The Object class
  * @class Object
  */

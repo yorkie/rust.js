@@ -27,6 +27,7 @@ pub fn new_instance() -> i32 {
     let global = v8::Context::Global();
     let modules = v8::Object::New();
 
+    modules.Set(v8::String::NewFromUtf8("assert"), builtin::assert::Init());
     modules.Set(v8::String::NewFromUtf8("buffer"), builtin::buffer::Init());
     modules.Set(v8::String::NewFromUtf8("console"), builtin::console::Init());
     modules.Set(v8::String::NewFromUtf8("crypto"), builtin::crypto::Init());

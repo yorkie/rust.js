@@ -1,4 +1,5 @@
 
+pub mod assert;
 pub mod buffer;
 pub mod console;
 pub mod crypto;

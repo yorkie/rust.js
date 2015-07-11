@@ -48,6 +48,7 @@ extern {
   fn v8_value_to_string(this: &Value) -> String;
   fn v8_value_to_number(this: &Value) -> Number;
   fn v8_value_to_integer(this: &Value) -> Integer;
+  fn v8_value_to_boolean(this: &Value) -> Boolean;
   fn v8_value_to_object(this: &Value) -> Object;
   fn v8_value_as_int32(this: &Value) -> i32;
   fn v8_value_as_int64(this: &Value) -> i64;
@@ -69,8 +70,6 @@ extern {
   fn v8_object_set(this: &Object, key: &Value, val: &Value) -> bool;
 
   fn v8_array_new() -> Array;
-  fn v8_array_get(this: &Array, key: &Value) -> Value;
-  fn v8_array_set(this: &Array, key: &Value, val: &Value) -> bool;
   fn v8_array_push(this: &Array, val: &Value) -> bool;
 
   fn v8_function_cast(fval: &Value) -> Function;
@@ -113,7 +112,7 @@ macro_rules! v8_try {
       Ok(val) => {
         ret = Some(val);
       },
-      Err(err) => {
+      _ => {
         ret = None;
         $args.GetReturnValue().SetWithBool(false)
       }
@@ -129,7 +128,7 @@ macro_rules! v8_try_slient {
       Ok(val) => {
         ret = Some(val);
       },
-      Err(err) => {
+      _ => {
         ret = None;
       }
     };
@@ -159,6 +158,10 @@ macro_rules! value_method(
       #[inline(always)]
       pub fn ToInteger(&self) -> Integer {
         unsafe { v8_value_to_integer(self.as_val()) }
+      }
+      #[inline(always)]
+      pub fn ToBoolean(&self) -> Boolean {
+        unsafe { v8_value_to_boolean(self.as_val()) }
       }
       #[inline(always)]
       pub fn ToObject(&self) -> Object {
@@ -333,6 +336,10 @@ impl Number {
 #[repr(C)]
 pub struct Integer(*mut *mut Integer);
 value_method!(Integer);
+
+#[repr(C)]
+pub struct Boolean(*mut *mut Boolean);
+value_method!(Boolean);
 
 #[repr(C)]
 pub struct Object(*mut *mut Object);

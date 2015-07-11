@@ -28,7 +28,10 @@ impl Commander {
       Err(..)  => panic!("room"),
     };
     let mut source = String::new();
-    fd.read_to_string(&mut source);
+    match fd.read_to_string(&mut source) {
+      Ok(val) => println!("successfully read the source: {:?}", val),
+      _ => println!("failed to read source")
+    }
     return source;
   }
 

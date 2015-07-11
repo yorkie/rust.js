@@ -328,6 +328,16 @@ Local<Integer> v8_value_to_integer(Value **val) {
 }
 
 /**
+ * call val->ToBoolean()
+ * @method v8_value_to_boolean
+ * @param {Value} this
+ * @return {Boolean} the result
+ */
+Local<Boolean> v8_value_to_boolean(Value **val) {
+  return (*val)->ToBoolean();
+}
+
+/**
  * call val->ToString()
  * @method v8_value_to_string
  * @param {Value} this

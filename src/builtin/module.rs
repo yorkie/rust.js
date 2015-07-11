@@ -1,7 +1,6 @@
 use util::v8;
 use util::v8::ValueT;
 use std::path::Path;
-use std::collections::HashMap;
 
 extern fn require(arguments: v8::FunctionCallbackInfo) {
   let name = arguments.At(0).ToString();
@@ -20,7 +19,7 @@ pub fn LoadBuiltinScript(name: &str) -> v8::Object {
   }
   let fval = script.Run();
   let func = v8::Function::Cast(&fval);
-  let mut exports = v8::Object::New();
+  let exports = v8::Object::New();
   func.Call(
     v8::Context::Global(), 
     &[exports.as_val()]

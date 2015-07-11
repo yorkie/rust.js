@@ -11,10 +11,12 @@ extern fn normalize(arguments: v8::FunctionCallbackInfo) {
 
 extern fn join(arguments: v8::FunctionCallbackInfo) {
   // TODO
+  arguments.GetReturnValue().SetWithBool(true);
 }
 
 extern fn resolve(arguments: v8::FunctionCallbackInfo) {
   // TODO
+  arguments.GetReturnValue().SetWithBool(true);
 }
 
 extern fn isAbsolute(arguments: v8::FunctionCallbackInfo) {
@@ -24,6 +26,7 @@ extern fn isAbsolute(arguments: v8::FunctionCallbackInfo) {
 
 extern fn relative(arguments: v8::FunctionCallbackInfo) {
   // TODO
+  arguments.GetReturnValue().SetWithBool(true);
 }
 
 extern fn dirname(arguments: v8::FunctionCallbackInfo) {

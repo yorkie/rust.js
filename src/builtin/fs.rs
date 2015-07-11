@@ -3,8 +3,6 @@ use std::fs::File;
 use std::io::Read;
 use std::os::unix::fs::MetadataExt;
 use std::str;
-use std::path::Path;
-use std::path::MAIN_SEPARATOR;
 use util::v8;
 
 extern fn rename(arguments: v8::FunctionCallbackInfo) {
@@ -15,7 +13,7 @@ extern fn rename(arguments: v8::FunctionCallbackInfo) {
 }
 
 extern fn chown(arguments: v8::FunctionCallbackInfo) {
-  // TODO
+  arguments.GetReturnValue().SetWithBool(true);
 }
 
 extern fn rmdir(arguments: v8::FunctionCallbackInfo) {
@@ -74,7 +72,7 @@ extern fn readFile(arguments: v8::FunctionCallbackInfo) {
 }
 
 extern fn writeFile(arguments: v8::FunctionCallbackInfo) {
-  // TODO
+  arguments.GetReturnValue().SetWithBool(true);
 }
 
 pub fn Init() -> v8::Object {

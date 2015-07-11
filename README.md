@@ -40,12 +40,13 @@ POSITIONAL ARGUMENTS:
 Working modules
 --------------
 
-- [`path`](src/builtin/path.rs) This module contains utilities for handling and transforming file paths.
+- [`assert`](src/builtin/assert.rs) This module is used for writing unit tests for your applications.
+- [`buffer`](src/builtin/buffer.rs) Pure JavaScript is Unicode friendly but not nice to binary data.
+- [`events`](src/builtin/events.js) Many objects in rust.js emit events.
 - [`fs`](src/builtin/fs.rs) File I/O is provided by simple wrappers around standard POSIX functions.
 - [`os`](src/builtin/os.rs) Provides a few basic operating-system related utility functions.
-- [`events`](src/builtin/events.js) Many objects in rust.js emit events.
+- [`path`](src/builtin/path.rs) This module contains utilities for handling and transforming file paths.
 - [`util`](src/builtin/util.js) These functions are in the module 'util'.
-- [`buffer`](src/builtin/buffer.rs) Pure JavaScript is Unicode friendly but not nice to binary data.
 
 License
 -------------

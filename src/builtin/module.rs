@@ -9,7 +9,7 @@ extern fn require(arguments: v8::FunctionCallbackInfo) {
 }
 
 pub fn LoadBuiltinScript(name: &str) -> v8::Object {
-  let base = Path::new("src/builtin");
+  let base = Path::new("lib");
   let mut filename = String::new();
   filename.push_str(name);
   filename.push_str(".js");

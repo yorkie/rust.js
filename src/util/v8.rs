@@ -266,7 +266,13 @@ impl Script {
   pub fn CompileWithFile(path: &str) -> Script {
     let mut f = v8_try_slient!(File::open(path));
     let mut s = string::String::new();
+    
+    // wrap the library
+    s.push_str("(function(exports, module, __dirname){");
     v8_try_slient!(f.read_to_string(&mut s));
+    s.push_str("})");
+
+    // load the function
     let data = v8_try_slient!(str::from_utf8(s.as_bytes()));
     let c_pdata = CString::new(data).unwrap();
     let c_ppath = CString::new(path).unwrap();

@@ -1,5 +1,6 @@
 
 var assert = require('assert');
 
-println(assert);
-println(assert.ok);
+assert(true);
+assert.equal('foobar', 'foobar');
+assert.notEqual('mdasd', false);

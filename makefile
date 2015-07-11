@@ -46,6 +46,9 @@ config.gypi: configure
 		$(error No $@, please run ./configure first)
 	fi
 
+test:
+	$(CARGO) test
+
 clean:
 	rm -rf ./target.deps
 	rm config.*

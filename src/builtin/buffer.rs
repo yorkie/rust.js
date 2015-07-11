@@ -18,9 +18,11 @@ struct StringBytes {
 }
 
 impl StringBytes {
-  pub fn New(src: String) -> StringBytes {
+  pub fn new(src: &'static str) -> StringBytes {
+    let mut bytes_string = String::new();
+    bytes_string.push_str(src);
     StringBytes {
-      source: src
+      source: bytes_string
     }
   }
   pub fn decode(&self, encoding: Encoding) -> Vec<u8> {
@@ -37,6 +39,18 @@ impl StringBytes {
       _ => String::new()
     }
   }
+}
+
+#[test]
+fn it_encodes_to_base64() {
+  let bytes = StringBytes::new("test string");
+  assert_eq!(bytes.encode(Encoding::Base64), "dGVzdCBzdHJpbmc=");
+}
+
+#[test]
+fn it_encodes_to_hex() {
+  let bytes = StringBytes::new("test string");
+  assert_eq!(bytes.encode(Encoding::Hex), "7465737420737472696e67");
 }
 
 pub fn Init() -> v8::Object {

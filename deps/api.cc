@@ -711,6 +711,10 @@ Local<FunctionTemplate> v8_function_tmpl_new_with_callback(FunctionCallback *cal
   return FunctionTemplate::New(isolate, *callback);
 }
 
+Local<FunctionTemplate> v8_function_tmpl_new_with_pointer_callback(FunctionCallback *callback) {
+  return FunctionTemplate::New(isolate, *callback);
+}
+
 /**
  * get Function object from FunctionTemplate
  * @method v8_function_tmpl_get_function

@@ -92,6 +92,7 @@ extern {
 
   // fn v8_function_tmpl_new() -> FunctionTemplate;
   fn v8_function_tmpl_new_with_callback(callback: &FunctionCallback) -> FunctionTemplate;
+  fn v8_function_tmpl_new_with_pointer_callback(callback: &PointerFunctionCallback) -> FunctionTemplate;
   fn v8_function_tmpl_get_function(this: &FunctionTemplate) -> Function;
   fn v8_function_tmpl_set_class_name(this: &FunctionTemplate, name: &[u8]);
   fn v8_function_tmpl_new_instance(this: &FunctionTemplate) -> Object;
@@ -399,6 +400,7 @@ impl Function {
 
 #[repr(C)]
 pub type FunctionCallback = extern fn(FunctionCallbackInfo);
+pub type PointerFunctionCallback = extern fn(*mut FunctionCallbackInfo);
 
 #[repr(C)]
 pub struct FunctionCallbackInfo(*mut *mut FunctionCallbackInfo);
@@ -451,6 +453,9 @@ pub struct FunctionTemplate(*mut *mut FunctionTemplate);
 impl FunctionTemplate {
   pub fn New(callback: FunctionCallback) -> FunctionTemplate {
     unsafe { v8_function_tmpl_new_with_callback(&callback) }
+  }
+  pub fn NewFromPointer(callback: PointerFunctionCallback) -> FunctionTemplate {
+    unsafe { v8_function_tmpl_new_with_pointer_callback(&callback) }
   }
   pub fn GetFunction(&self) -> Function {
     unsafe { v8_function_tmpl_get_function(self) }

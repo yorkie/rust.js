@@ -39,6 +39,14 @@ impl StringBytes {
       _ => String::new()
     }
   }
+  pub fn byte_length(&self) -> usize {
+    self.source.as_bytes().len()
+  }
+
+  extern fn New(arguments: v8::FunctionCallbackInfo) {
+    arguments.GetReturnValue().SetWithBool(true);
+  }
+
 }
 
 #[test]
@@ -54,5 +62,8 @@ fn it_encodes_to_hex() {
 }
 
 pub fn Init() -> v8::Object {
-  v8::Object::New()
+  let exports = v8::Object::New();
+  exports.Set(v8::String::NewFromUtf8("StringBytes"), 
+    v8::FunctionTemplate::New(StringBytes::New).GetFunction());
+  return exports;
 }

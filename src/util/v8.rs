@@ -35,7 +35,9 @@ extern {
   fn v8_context_global() -> Object;
   fn v8_context_scope(closure: extern fn());
 
-  fn v8_script_compile(source: &[u8]) -> Script;
+  fn v8_script_compile(
+    source  : *const libc::c_char
+  ) -> Script;
   fn v8_script_compile_with_filename(
     source  : *const libc::c_char,
     path    : *const libc::c_char
@@ -262,7 +264,10 @@ pub fn with_context_scope(closure: extern fn()) {
 pub struct Script(*mut *mut Script);
 impl Script {
   pub fn Compile(data: &[u8]) -> Script {
-    unsafe { v8_script_compile(data) }
+    let c_pdata = CString::new(data).unwrap();
+    unsafe { 
+      v8_script_compile(c_pdata.as_ptr())
+    }
   }
   pub fn CompileWithFile(path: &str) -> Script {
     let mut f = v8_try_slient!(File::open(path));

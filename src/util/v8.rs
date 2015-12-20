@@ -77,7 +77,7 @@ extern {
   fn v8_array_push(this: &Array, val: &Value) -> bool;
 
   fn v8_function_cast(fval: &Value) -> Function;
-  fn v8_function_call(this: &Function, global: &Value, argv: &[&Value]) -> Value;
+  fn v8_function_call(this: &Function, global: &Value, argv: *const &Value) -> Value;
   fn v8_function_callback_info_length(this: &FunctionCallbackInfo) -> i64;
   fn v8_function_callback_info_at(this: &FunctionCallbackInfo, index: i32) -> Value;
   fn v8_function_callback_info_this(this: &FunctionCallbackInfo) -> Object;
@@ -96,7 +96,7 @@ extern {
   fn v8_function_tmpl_new_with_callback(callback: &FunctionCallback) -> FunctionTemplate;
   fn v8_function_tmpl_new_with_pointer_callback(callback: &PointerFunctionCallback) -> FunctionTemplate;
   fn v8_function_tmpl_get_function(this: &FunctionTemplate) -> Function;
-  fn v8_function_tmpl_set_class_name(this: &FunctionTemplate, name: &[u8]);
+  fn v8_function_tmpl_set_class_name(this: &FunctionTemplate, name: *const libc::c_char);
   fn v8_function_tmpl_new_instance(this: &FunctionTemplate) -> Object;
 
 }
@@ -399,7 +399,9 @@ impl Function {
     unsafe { v8_function_cast(fval) }
   }
   pub fn Call<T: ValueT>(&self, recv: T, argv: &[&Value]) -> Value {
-    unsafe { v8_function_call(self, recv.as_val(), argv) }
+    unsafe { 
+      v8_function_call(self, recv.as_val(), argv.as_ptr()) 
+    }
   }
 }
 
@@ -466,7 +468,10 @@ impl FunctionTemplate {
     unsafe { v8_function_tmpl_get_function(self) }
   }
   pub fn SetClassName(&self, name: &[u8]) {
-    unsafe { v8_function_tmpl_set_class_name(self, name) }
+    let c_pname = CString::new(name).unwrap();
+    unsafe { 
+      v8_function_tmpl_set_class_name(self, c_pname.as_ptr())
+    }
   }
   pub fn NewInstance(&self) -> Object {
     unsafe { v8_function_tmpl_new_instance(self) }

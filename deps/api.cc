@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
-#include <string>
+#include <string.h>
 
 #include "v8.h"
 #include "api.h"

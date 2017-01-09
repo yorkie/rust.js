@@ -48,6 +48,33 @@ Working modules
 - [`path`](src/builtin/path.rs) This module contains utilities for handling and transforming file paths.
 - [`util`](src/builtin/util.js) These functions are in the module 'util'.
 
+Development
+-------------
+
+1. Clone the repository
+
+```sh
+$ git clone git@github.com:yorkie/rust.js.git
+```
+
+2. Pull submodules
+
+```sh
+$ git submodule update --init --recursive
+```
+
+3. Build dependencies
+
+```sh
+$ ./configure && make
+```
+
+4. Build source code
+
+```sh
+$ cargo build
+```
+
 License
 -------------
 MIT

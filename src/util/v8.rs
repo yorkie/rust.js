@@ -405,7 +405,6 @@ impl Function {
   }
 }
 
-#[repr(C)]
 pub type FunctionCallback = extern fn(FunctionCallbackInfo);
 pub type PointerFunctionCallback = extern fn(*mut FunctionCallbackInfo);
 

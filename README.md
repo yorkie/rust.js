@@ -51,29 +51,24 @@ Working modules
 Development
 -------------
 
-1. Clone the repository
+Clone the repository
 
 ```sh
 $ git clone git@github.com:yorkie/rust.js.git
 ```
 
-2. Pull submodules
+Pull submodules
 
 ```sh
 $ git submodule update --init --recursive
 ```
 
-3. Build dependencies
+Build dependencies
 
 ```sh
 $ ./configure && make
 ```
 
-4. Build source code
-
-```sh
-$ cargo build
-```
 
 License
 -------------

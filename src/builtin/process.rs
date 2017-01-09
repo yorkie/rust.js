@@ -39,6 +39,5 @@ pub fn Setup(process: v8::Object) -> v8::Object {
     envObject.Set(v8::String::NewFromUtf8(&*key), v8::String::NewFromUtf8(&*val));
   }
   process.Set(v8::String::NewFromUtf8("env"), envObject);
-
-  process
+  return process;
 }

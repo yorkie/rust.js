@@ -15,7 +15,7 @@ pub fn LoadBuiltinScript(name: &str) -> v8::Object {
   filename.push_str(".js");
   let script = v8::Script::CompileWithFile(base.join(filename).to_str().unwrap());
   if script.IsEmpty() {
-    println!("Empty source");
+    println!("Empty source found lib.");
   }
   let fval = script.Run();
   let func = v8::Function::Cast(&fval);

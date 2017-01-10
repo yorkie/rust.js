@@ -18,15 +18,21 @@ V ?= 1
 
 # BUILDTYPE=Debug builds both release and debug builds. If you want to compile
 # just the debug build, run `make -C target.deps BUILDTYPE=Debug` instead.
-ifeq ($(BUILDTYPE),Release)
+ifeq ($(BUILDTYPE), Release)
 all: target.deps/Makefile $(RUSTJS_EXE)
 else
 all: target.deps/Makefile $(RUSTJS_EXE) $(RUSTJS_G_EXE)
 endif
 
+LIB_POSTIFIX ?= .so
+ifeq ($(shell uname), Darwin)
+LIB_POSTIFIX := .dylib
+endif
+# TODO(Yorkie): support Windows?
+
 $(RUSTJS_EXE): config.gypi target.deps/Makefile
 	$(MAKE) -C target.deps BUILDTYPE=Release V=$(V)
-	ln -f target.deps/Release/librustjs_deps.dylib /usr/local/lib/
+	ln -f target.deps/Release/librustjs_deps$(LIB_POSTIFIX) /usr/local/lib/
 	$(CARGO) build
 	ln -f target/debug/rustjs /usr/local/bin/
 

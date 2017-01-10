@@ -47,6 +47,7 @@ extern {
 
   fn v8_value_is_string(this: &Value) -> bool;
   fn v8_value_is_function(this: &Value) -> bool;
+  fn v8_value_is_undefined(this: &Value) -> bool;
   fn v8_value_to_string(this: &Value) -> String;
   fn v8_value_to_number(this: &Value) -> Number;
   fn v8_value_to_integer(this: &Value) -> Integer;
@@ -151,6 +152,10 @@ macro_rules! value_method(
       #[inline(always)]
       pub fn IsFunction(&self) -> bool {
         unsafe { v8_value_is_function(self.as_val()) }
+      }
+      #[inline(always)]
+      pub fn IsUndefined(&self) -> bool {
+        unsafe { v8_value_is_undefined(self.as_val()) }
       }
       #[inline(always)]
       pub fn ToString(&self) -> String {

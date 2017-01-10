@@ -308,6 +308,16 @@ bool v8_value_is_function(Value **val) {
 }
 
 /**
+ * check the value if it's empty
+ * @method v8_value_is_empty
+ * @param {Value} this
+ * @return {bool} the result
+ */
+bool v8_value_is_undefined(Value **val) {
+  return (*val)->IsUndefined();
+}
+
+/**
  * call val->ToNumber()
  * @method v8_value_to_number
  * @param {Value} this

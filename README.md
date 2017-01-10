@@ -9,7 +9,7 @@ Build
 
 Prerequisites:
 
-- Rust 1.1.0
+- Rust 1.10.0+
 - Python 2.6 or 2.7
 - GNU Make 3.81 or newer
 

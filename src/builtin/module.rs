@@ -4,8 +4,12 @@ use std::path::Path;
 
 extern fn require(arguments: v8::FunctionCallbackInfo) {
   let name = arguments.At(0).ToString();
-  let modules = v8::Context::Global().Get(v8::String::NewFromUtf8("_modules")).ToObject();
-  arguments.GetReturnValue().Set(modules.Get(name));
+  let cached = v8::Context::Global().Get(v8::String::NewFromUtf8("_modules")).ToObject();
+  let exports = cached.Get(name);
+  if exports.IsUndefined() {
+    println!("module not found");
+  }
+  arguments.GetReturnValue().Set(exports);
 }
 
 pub fn LoadBuiltinScript(name: &str) -> v8::Object {

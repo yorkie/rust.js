@@ -757,6 +757,55 @@ Local<Object> v8_function_tmpl_new_instance(FunctionTemplate **ft) {
 }
 
 /**
+ * @class Exception
+ */
+
+/**
+ * create an exception
+ * @method v8_exception_throw_error
+ */
+Local<Value> v8_exception_throw_error(char *msg) {
+  auto ret = Exception::Error(String::NewFromUtf8(isolate, msg));
+  return isolate->ThrowException(ret);
+}
+
+/**
+ * create an exception for range
+ * @method v8_exception_throw_range_error
+ */
+Local<Value> v8_exception_throw_range_error(char *msg) {
+  auto ret = Exception::RangeError(String::NewFromUtf8(isolate, msg));
+  return isolate->ThrowException(ret);
+}
+
+/**
+ * create an exception for reference
+ * @method v8_exception_throw_reference_error
+ */
+Local<Value> v8_exception_throw_reference_error(char *msg) {
+  auto ret = Exception::ReferenceError(String::NewFromUtf8(isolate, msg));
+  return isolate->ThrowException(ret);
+}
+
+/**
+ * throws an exception for syntax error
+ * @method v8_exception_throw_syntax_error
+ */
+Local<Value> v8_exception_throw_syntax_error(char *msg) {
+  auto ret = Exception::SyntaxError(String::NewFromUtf8(isolate, msg));
+  return isolate->ThrowException(ret);
+}
+
+/**
+ * create an exception for type errors
+ * @method v8_exception_throw_type_error
+ */
+Local<Value> v8_exception_throw_type_error(char *msg) {
+  auto ret = Exception::TypeError(String::NewFromUtf8(isolate, msg));
+  return isolate->ThrowException(ret);
+}
+
+/**
  * utilities
  */
 

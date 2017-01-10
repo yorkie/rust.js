@@ -100,6 +100,12 @@ extern {
   fn v8_function_tmpl_set_class_name(this: &FunctionTemplate, name: *const libc::c_char);
   fn v8_function_tmpl_new_instance(this: &FunctionTemplate) -> Object;
 
+  // exceptions
+  fn v8_exception_throw_error(msg: *const libc::c_char);
+  fn v8_exception_throw_range_error(msg: *const libc::c_char);
+  fn v8_exception_throw_reference_error(msg: *const libc::c_char);
+  fn v8_exception_throw_syntax_error(msg: *const libc::c_char);
+  fn v8_exception_throw_type_error(msg: *const libc::c_char);
 }
 
 pub trait IndexT {
@@ -483,17 +489,42 @@ impl FunctionTemplate {
 }
 
 #[repr(C)]
+pub struct Exception;
+impl Exception {
+  pub fn ThrowError(msg: &str) {
+    let c_msg = CString::new(msg).unwrap();
+    unsafe { v8_exception_throw_error(c_msg.as_ptr()) }
+  }
+  pub fn ThrowRangeError(msg: &str) {
+    let c_msg = CString::new(msg).unwrap();
+    unsafe { v8_exception_throw_range_error(c_msg.as_ptr()) }
+  }
+  pub fn ThrowReferenceError(msg: &str) {
+    let c_msg = CString::new(msg).unwrap();
+    unsafe { v8_exception_throw_reference_error(c_msg.as_ptr()) }
+  }
+  pub fn ThrowSyntaxError(msg: &str) {
+    let c_msg = CString::new(msg).unwrap();
+    unsafe { v8_exception_throw_syntax_error(c_msg.as_ptr()) }
+  }
+}
+
+#[repr(C)]
 pub struct V8(*mut V8);
 impl V8 {
-  pub fn UnInitializePlatform() -> bool {
-    unsafe { v8_free_platform() }
-  }
+  /// Initialize the v8 platform object
   pub fn InitializePlatform() -> bool {
     unsafe { v8_initialize_platform() }
   }
+  /// Initialize the v8 context
   pub fn Initialize() -> bool {
     unsafe { v8_initialize() }
   }
+  /// Uninitialize the platform
+  pub fn UnInitializePlatform() -> bool {
+    unsafe { v8_free_platform() }
+  }
+  /// Dispose the v8 context
   pub fn Dispose() -> bool {
     unsafe { v8_dispose() }
   }

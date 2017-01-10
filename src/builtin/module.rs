@@ -7,7 +7,8 @@ extern fn require(arguments: v8::FunctionCallbackInfo) {
   let cached = v8::Context::Global().Get(v8::String::NewFromUtf8("_modules")).ToObject();
   let exports = cached.Get(name);
   if exports.IsUndefined() {
-    println!("module not found");
+    v8::Exception::ThrowReferenceError("Module not found");
+    return;
   }
   arguments.GetReturnValue().Set(exports);
 }

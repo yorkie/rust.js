@@ -1,4 +1,8 @@
+'use strict';
 
-var StringBytes = require('buffer').StringBytes;
+const buffer = require('buffer');
+const stringBytes = new buffer.StringBytes();
 
-console.log(StringBytes());
+console.log(buffer.StringBytes);
+console.log(stringBytes.encode);
+console.log(stringBytes.decode);

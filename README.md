@@ -48,7 +48,12 @@ API References
   - `console.info()`
   - `console.warn()`
   - `console.error()`
-- [`events`](src/builtin/events.js) Many objects in rust.js emit events.
+- [`crypto`](src/builtin/crypto.rs) OpenSSL bindings.
+  - `crypto.version` The text variant of the version number and the release date.
+  - `crypto.number` OPENSSL_VERSION_NUMBER is a numeric release version identifier.
+  - `crypto.platform` The "Configure" target of the library build in the form "platform: ..." if available or "platform: information not available" otherwise.
+  - `crypto.dir` The "OPENSSLDIR" setting of the library build in the form "OPENSSLDIR: "..."" if available or "OPENSSLDIR: N/A" otherwise.
+- [`events`](src/builtin/events.rs) Many objects in rust.js emit events.
   - `events.EventEmitter`
     - `.on(name, listener)`
     - `.once(name, listener)`

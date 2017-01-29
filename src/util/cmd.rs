@@ -31,7 +31,7 @@ impl Commander {
     let mut source = String::new();
     
     match fd.read_to_string(&mut source) {
-      Ok(val) => println!("successfully loaded"),
+      Ok(val) => {},
       _ => println!("failed to read source"),
     }
     return source;

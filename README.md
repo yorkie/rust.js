@@ -37,13 +37,12 @@ POSITIONAL ARGUMENTS:
     INPUT      main script file
 ```
 
-Working modules
+API References
 --------------
 
 - [`assert`](src/builtin/assert.rs) This module is used for writing unit tests for your applications.
   - `assert.equal()`
   - `assert.notEqual()`
-- [`buffer`](src/builtin/buffer.rs) Pure JavaScript is Unicode friendly but not nice to binary data.
 - [`console`](src/builtin/console.rs) Console object.
   - `console.log()`
   - `console.info()`
@@ -52,7 +51,11 @@ Working modules
 - [`events`](src/builtin/events.js) Many objects in rust.js emit events.
   - `events.EventEmitter`
 - [`fs`](src/builtin/fs.rs) File I/O is provided by simple wrappers around standard POSIX functions.
+  - `fs.rename()` rename the file.
+  - `fs.rmdir()` remove the dir.
+  - `fs.mkdir()` create the dir.
   - `fs.stat()` get the stat of the given pathname.
+  - `fs.readdir()` read the directory.
   - `fs.readFile()` read the file of the given pathname.
 - [`os`](src/builtin/os.rs) Provides a few basic operating-system related utility functions.
   - `fs.tmpdir()`
@@ -71,6 +74,20 @@ Working modules
   - `url.parse()`: parse a url string.
   - `url.format()`: generate a string by url options.
 - [`util`](src/builtin/util.rs) These functions are in the module 'util'.
+  - `util.isArray()`
+  - `util.isFunction()`
+  - `util.isBoolean()`
+  - `util.isNull()`
+  - `util.isNullOrUndefined()`
+  - `util.isNumber()`
+  - `util.isString()`
+  - `util.isUndefined()`
+  - `util.isRegExp()`
+  - `util.isObject()`
+  - `util.isDate()`
+  - `util.isError()`
+  - `util.isPrimitive()`
+  - `util.inherits()`
 
 Development
 -------------

@@ -1,16 +1,16 @@
-
+'use strict';
 
 var fs = require('fs');
+var assert = require('assert');
 
 // fs.stat
 var stat = fs.stat('./makefile');
-println(JSON.stringify(stat));
+assert(typeof stat.dev === 'number');
+assert(typeof stat.ino === 'number');
 
 // fs.readdir
-fs.readdir('./').forEach(function (p) {
-  println(p)
-});
+assert(Array.isArray(fs.readdir('./')));
 
-// fs.readFile
+// // fs.readFile
 var dat = fs.readFile('./makefile');
-println(dat);
+assert(typeof dat === 'string');

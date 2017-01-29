@@ -23,14 +23,16 @@ impl Commander {
       .index(1)
     )
     .get_matches();
+
     let mut fd = match File::open(matches.value_of("INPUT").unwrap()) {
       Ok(fd) => fd,
       Err(..)  => panic!("room"),
     };
     let mut source = String::new();
+    
     match fd.read_to_string(&mut source) {
-      Ok(val) => println!("successfully read the source: {:?}", val),
-      _ => println!("failed to read source")
+      Ok(val) => println!("successfully loaded"),
+      _ => println!("failed to read source"),
     }
     return source;
   }

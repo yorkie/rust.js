@@ -556,15 +556,15 @@ Local<Function> v8_function_cast(Local<Value> *fval) {
  * @param {Function} this
  * @param {Value} global - The global variable
  * @param {Value[]} argv - The arguments
+ * @param {Int} argc - the count of argv
  * @return {Value} the result
  */
-Local<Value> v8_function_call(Function **func, Local<Value> global, Local<Value> **argv) {
-  int32_t count = sizeof(argv) / sizeof(Local<Value>*);
-  Local<Value> *args = new Local<Value>[count];
-  for (int32_t i = 0; i < count; i++) {
+Local<Value> v8_function_call(Function **func, Local<Value> global, Local<Value> **argv, uint32_t argc) {
+  Local<Value> *args = new Local<Value>[argc];
+  for (int32_t i = 0; i < argc; i++) {
     args[i] = *argv[i];
   }
-  return (*func)->Call(global, count, args);
+  return (*func)->Call(global, argc, args);
 }
 
 /**

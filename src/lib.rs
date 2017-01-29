@@ -7,11 +7,6 @@ pub mod builtin;
 use util::cmd::Commander;
 use util::v8;
 
-extern fn println(arguments: v8::FunctionCallbackInfo) {
-  let val = arguments.At(0).ToString();
-  println!("{}", val.as_string());
-}
-
 pub fn new_instance() -> i32 {
   extern fn on_locked() {
     v8::with_isolate_scope(&|| {
@@ -23,7 +18,6 @@ pub fn new_instance() -> i32 {
     v8::with_context_scope(on_context_scoped);
   }
   extern fn on_context_scoped() {
-    let process = v8::Object::New();
     let global = v8::Context::Global();
     let modules = v8::Object::New();
 
@@ -40,6 +34,7 @@ pub fn new_instance() -> i32 {
     modules.Set(v8::String::NewFromUtf8("net"), builtin::net::Init());
     modules.Set(v8::String::NewFromUtf8("os"), builtin::os::Init());
     modules.Set(v8::String::NewFromUtf8("path"), builtin::path::Init());
+    modules.Set(v8::String::NewFromUtf8("process"), builtin::process::Init());
     modules.Set(v8::String::NewFromUtf8("querystring"), builtin::path::Init());
     modules.Set(v8::String::NewFromUtf8("readline"), builtin::readline::Init());
     modules.Set(v8::String::NewFromUtf8("repl"), builtin::repl::Init());
@@ -47,10 +42,15 @@ pub fn new_instance() -> i32 {
     modules.Set(v8::String::NewFromUtf8("url"), builtin::url::Init());
     modules.Set(v8::String::NewFromUtf8("util"), builtin::util::Init());
 
+    {
+      global.Set(v8::String::NewFromUtf8("require"), 
+        builtin::module::Setup());
+      global.Set(v8::String::NewFromUtf8("process"),
+        modules.Get(v8::String::NewFromUtf8("process")));
+      global.Set(v8::String::NewFromUtf8("console"), 
+        modules.Get(v8::String::NewFromUtf8("console")));
+    }
     global.Set(v8::String::NewFromUtf8("_modules"), modules);
-    global.Set(v8::String::NewFromUtf8("process"), builtin::process::Setup(process));
-    global.Set(v8::String::NewFromUtf8("require"), builtin::module::Setup());
-    global.Set(v8::String::NewFromUtf8("println"), v8::FunctionTemplate::New(println).GetFunction());
 
     let source = Commander::GetSource();
     let script = v8::Script::Compile(source.as_bytes());

@@ -53,6 +53,7 @@ extern {
   fn v8_value_to_integer(this: &Value) -> Integer;
   fn v8_value_to_boolean(this: &Value) -> Boolean;
   fn v8_value_to_object(this: &Value) -> Object;
+  fn v8_value_to_function(this: &Value) -> Function;
   fn v8_value_as_int32(this: &Value) -> i32;
   fn v8_value_as_int64(this: &Value) -> i64;
   fn v8_value_as_uint32(this: &Value) -> u32;
@@ -78,7 +79,7 @@ extern {
   fn v8_array_push(this: &Array, val: &Value) -> bool;
 
   fn v8_function_cast(fval: &Value) -> Function;
-  fn v8_function_call(this: &Function, global: &Value, argv: *const &Value) -> Value;
+  fn v8_function_call(this: &Function, global: &Value, argv: *const &Value, argc: u32) -> Value;
   fn v8_function_callback_info_length(this: &FunctionCallbackInfo) -> i64;
   fn v8_function_callback_info_at(this: &FunctionCallbackInfo, index: i32) -> Value;
   fn v8_function_callback_info_this(this: &FunctionCallbackInfo) -> Object;
@@ -182,6 +183,10 @@ macro_rules! value_method(
       #[inline(always)]
       pub fn ToObject(&self) -> Object {
         unsafe { v8_value_to_object(self.as_val()) }
+      }
+      #[inline(always)]
+      pub fn ToFunction(&self) -> Function {
+        unsafe { v8_value_to_function(self.as_val()) }
       }
       #[inline(always)]
       pub fn Int32Value(&self) -> i32 {
@@ -322,14 +327,17 @@ impl String {
   pub fn Empty(&self) -> String {
     unsafe { v8_string_empty(self) }
   }
-  pub fn as_string(&self) -> string::String {
-    unsafe { 
-      let mut v: Vec<u8> = Vec::new();
-      for i in CStr::from_ptr(v8_string_as_string(self)).to_bytes() {
-        v.push(*i);
-      }
-      string::String::from_utf8(v).unwrap()
+  pub fn as_bytes(&self) -> &[u8] {
+    unsafe {
+      CStr::from_ptr(v8_string_as_string(self)).to_bytes()
     }
+  }
+  pub fn as_string(&self) -> string::String {
+    let mut v: Vec<u8> = Vec::new();
+    for i in self.as_bytes() {
+      v.push(*i);
+    }
+    string::String::from_utf8(v).unwrap()
   }
 }
 
@@ -410,8 +418,9 @@ impl Function {
     unsafe { v8_function_cast(fval) }
   }
   pub fn Call<T: ValueT>(&self, recv: T, argv: &[&Value]) -> Value {
+    let argc = (*argv).len() as u32;
     unsafe { 
-      v8_function_call(self, recv.as_val(), argv.as_ptr()) 
+      v8_function_call(self, recv.as_val(), argv.as_ptr(), argc)
     }
   }
 }

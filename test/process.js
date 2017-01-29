@@ -1,8 +1,6 @@
 'use strict';
 
-println('group id: ' + process.getgid());
-println('process id: ' + process.getpid());
-println('environment variables:');
-println(Object.keys(process.env));
-
-process.exit(1);
+console.log('group id: ' + process.getgid());
+console.log('process id: ' + process.getpid());
+console.log('environment variables:');
+console.log(JSON.stringify(process.env, null, 2));

@@ -24,20 +24,20 @@ extern fn getpid(arguments: v8::FunctionCallbackInfo) {
   );
 }
 
-pub fn Setup(process: v8::Object) -> v8::Object {
+pub fn Init() -> v8::Object {
+  let Process = v8::Object::New();
   // bind functions
-  process.Set(v8::String::NewFromUtf8("exit"), v8::FunctionTemplate::New(exit).GetFunction());
-  process.Set(v8::String::NewFromUtf8("getgid"), v8::FunctionTemplate::New(getgid).GetFunction());
-  process.Set(v8::String::NewFromUtf8("getpid"), v8::FunctionTemplate::New(getpid).GetFunction());
+  Process.Set(v8::String::NewFromUtf8("exit"), v8::FunctionTemplate::New(exit).GetFunction());
+  Process.Set(v8::String::NewFromUtf8("getgid"), v8::FunctionTemplate::New(getgid).GetFunction());
+  Process.Set(v8::String::NewFromUtf8("getpid"), v8::FunctionTemplate::New(getpid).GetFunction());
   // bind consts
-  process.Set(v8::String::NewFromUtf8("title"), v8::String::NewFromUtf8(config::NAME));
-  process.Set(v8::String::NewFromUtf8("version"), v8::String::NewFromUtf8(config::VERSION));
-
+  Process.Set(v8::String::NewFromUtf8("title"), v8::String::NewFromUtf8(config::NAME));
+  Process.Set(v8::String::NewFromUtf8("version"), v8::String::NewFromUtf8(config::VERSION));
   // set process.env
   let envObject = v8::Object::New();
   for (key, val) in env::vars() {
     envObject.Set(v8::String::NewFromUtf8(&*key), v8::String::NewFromUtf8(&*val));
   }
-  process.Set(v8::String::NewFromUtf8("env"), envObject);
-  return process;
+  Process.Set(v8::String::NewFromUtf8("env"), envObject);
+  return Process;
 }

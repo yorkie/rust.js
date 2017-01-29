@@ -1,4 +1,4 @@
+'use strict';
+const util = require('util');
 
-var util = require('util');
-
-println(util.isFunction);
+console.log(util.isFunction);

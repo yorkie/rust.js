@@ -42,6 +42,7 @@ Working modules
 
 - [`assert`](src/builtin/assert.rs) This module is used for writing unit tests for your applications.
 - [`buffer`](src/builtin/buffer.rs) Pure JavaScript is Unicode friendly but not nice to binary data.
+- [`console`](src/builtin/console.rs) Console object.
 - [`events`](src/builtin/events.js) Many objects in rust.js emit events.
 - [`fs`](src/builtin/fs.rs) File I/O is provided by simple wrappers around standard POSIX functions.
 - [`os`](src/builtin/os.rs) Provides a few basic operating-system related utility functions.

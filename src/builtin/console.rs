@@ -3,21 +3,26 @@ use util::v8;
 use util::v8::ValueT;
 use std::io::{self, Write};
 
-extern fn info(arguments: v8::FunctionCallbackInfo) {
+fn stringify(obj: &v8::Value) -> v8::String {
   let global = v8::Context::Global();
+  let JSON = global.Get(v8::String::NewFromUtf8("JSON")).ToObject();
+  let stringify: v8::Function = v8::Function::Cast(
+    &JSON.Get(v8::String::NewFromUtf8("stringify")));
+  let replacer = v8::Number::NewFromInt32(0);
+  let space = v8::Number::NewFromInt32(2);
+  
+  stringify.Call(JSON,
+    &[obj, &replacer.as_val(), &space.as_val()]).ToString()
+}
+
+extern fn info(arguments: v8::FunctionCallbackInfo) {
   let firstArg = arguments.At(0);
   let msg;
 
   if firstArg.IsString() || firstArg.IsFunction() {
     msg = firstArg.ToString();
   } else {
-    let JSON = global.Get(v8::String::NewFromUtf8("JSON")).ToObject();
-    let stringify: v8::Function = v8::Function::Cast(
-      &JSON.Get(v8::String::NewFromUtf8("stringify")));
-    let space = v8::Number::NewFromInt32(0);
-    let indent = v8::Number::NewFromInt32(2);
-    msg = stringify.Call(JSON,
-      &[&firstArg, &space.as_val(), &indent.as_val()]).ToString();
+    msg = stringify(&firstArg);
   }
 
   let stdout = io::stdout();
@@ -26,7 +31,15 @@ extern fn info(arguments: v8::FunctionCallbackInfo) {
 }
 
 extern fn warn(arguments: v8::FunctionCallbackInfo) {
-  let msg = arguments.At(0).ToString();
+  let firstArg = arguments.At(0);
+  let msg;
+
+  if firstArg.IsString() || firstArg.IsFunction() {
+    msg = firstArg.ToString();
+  } else {
+    msg = stringify(&firstArg);
+  }
+
   let stderr = io::stderr();
   let mut handle = stderr.lock();
   handle.write_fmt(format_args!("{}\n", msg.as_string()));

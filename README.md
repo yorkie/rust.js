@@ -2,7 +2,7 @@
 Rust.js
 -------------
 
-NPM and Node.js compatible backend JavaScript platform, which is implemented in Rust.
+Run your JavaScript apps backed by Rust.
 
 Build
 -------------

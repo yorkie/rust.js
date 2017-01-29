@@ -47,7 +47,8 @@ Working modules
 - [`fs`](src/builtin/fs.rs) File I/O is provided by simple wrappers around standard POSIX functions.
 - [`os`](src/builtin/os.rs) Provides a few basic operating-system related utility functions.
 - [`path`](src/builtin/path.rs) This module contains utilities for handling and transforming file paths.
-- [`util`](src/builtin/util.js) These functions are in the module 'util'.
+- [`url`](src/builtin/url.rs) The URL parser/formatter based on [servo/rust-url].
+- [`util`](src/builtin/util.rs) These functions are in the module 'util'.
 
 Development
 -------------
@@ -74,3 +75,5 @@ $ ./configure && make
 License
 -------------
 MIT
+
+[servo/rust-url]: https://github.com/servo/rust-url

@@ -50,6 +50,9 @@ API References
   - `console.error()`
 - [`events`](src/builtin/events.js) Many objects in rust.js emit events.
   - `events.EventEmitter`
+    - `.on(name, listener)`
+    - `.once(name, listener)`
+    - `.removeAllEventListeners()` remove all registered listeners on this emitter.
 - [`fs`](src/builtin/fs.rs) File I/O is provided by simple wrappers around standard POSIX functions.
   - `fs.rename()` rename the file.
   - `fs.rmdir()` remove the dir.
@@ -57,6 +60,7 @@ API References
   - `fs.stat()` get the stat of the given pathname.
   - `fs.readdir()` read the directory.
   - `fs.readFile()` read the file of the given pathname.
+  - `fs.writeFile()` write the file of the given pathname and bytes/string.
 - [`os`](src/builtin/os.rs) Provides a few basic operating-system related utility functions.
   - `fs.tmpdir()`
   - `fs.homedir()`

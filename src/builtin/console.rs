@@ -51,5 +51,5 @@ pub fn Init() -> v8::Object {
   Console.Set(v8::String::NewFromUtf8("info"), v8::FunctionTemplate::New(info).GetFunction());
   Console.Set(v8::String::NewFromUtf8("warn"), v8::FunctionTemplate::New(warn).GetFunction());
   Console.Set(v8::String::NewFromUtf8("error"), v8::FunctionTemplate::New(warn).GetFunction());
-  return Console;
+  Console
 }

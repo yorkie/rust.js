@@ -72,6 +72,7 @@ extern {
   fn v8_boolean_value(this: &Boolean) -> bool;
 
   fn v8_object_new() -> Object;
+  fn v8_object_get_isolate(this: &Object) -> Isolate;
   fn v8_object_get(this: &Object, key: &Value) -> Value;
   fn v8_object_set(this: &Object, key: &Value, val: &Value) -> bool;
 
@@ -85,6 +86,7 @@ extern {
   fn v8_function_callback_info_this(this: &FunctionCallbackInfo) -> Object;
   fn v8_function_callback_info_holder(this: &FunctionCallbackInfo) -> Object;
   fn v8_function_callback_info_get_return_value(this: &FunctionCallbackInfo) -> ReturnValue;
+  fn v8_function_callback_info_is_constructcall(this: &FunctionCallbackInfo) -> bool;
 
   fn v8_return_value_set(this: &ReturnValue, val: &Value);
   fn v8_return_value_set_bool(this: &ReturnValue, val: bool);
@@ -99,6 +101,8 @@ extern {
   fn v8_function_tmpl_new_with_pointer_callback(callback: &PointerFunctionCallback) -> FunctionTemplate;
   fn v8_function_tmpl_get_function(this: &FunctionTemplate) -> Function;
   fn v8_function_tmpl_set_class_name(this: &FunctionTemplate, name: *const libc::c_char);
+  fn v8_function_tmpl_set_internal_fieldcount(this: &FunctionTemplate, fieldCount: u32);
+  fn v8_function_tmpl_set_property_method(this: &FunctionTemplate, name: *const libc::c_char, method: &FunctionCallback);
   fn v8_function_tmpl_new_instance(this: &FunctionTemplate) -> Object;
 
   // exceptions
@@ -388,6 +392,9 @@ impl Object {
   pub fn New() -> Object {
     unsafe { v8_object_new() }
   }
+  pub fn GetIsolate(&self) -> Isolate {
+    unsafe { v8_object_get_isolate(self) }
+  }
   pub fn Get<K:IndexT>(&self, key: K) -> Value {
     key.get(self)
   }
@@ -446,6 +453,9 @@ impl FunctionCallbackInfo {
   pub fn GetReturnValue(&self) -> ReturnValue {
     unsafe { v8_function_callback_info_get_return_value(self) }
   }
+  pub fn IsConstructCall(&self) -> bool {
+    unsafe { v8_function_callback_info_is_constructcall(self) }
+  }
 }
 
 #[repr(C)]
@@ -486,10 +496,21 @@ impl FunctionTemplate {
   pub fn GetFunction(&self) -> Function {
     unsafe { v8_function_tmpl_get_function(self) }
   }
-  pub fn SetClassName(&self, name: &[u8]) {
+  pub fn SetClassName(&self, name: &str) {
     let c_pname = CString::new(name).unwrap();
     unsafe { 
       v8_function_tmpl_set_class_name(self, c_pname.as_ptr())
+    }
+  }
+  pub fn SetInternalFieldCount(&self, fieldCount: u32) {
+    unsafe {
+      v8_function_tmpl_set_internal_fieldcount(self, fieldCount)
+    }
+  }
+  pub fn SetPropertyMethod(&self, name: &str, method: FunctionCallback) {
+    let c_name = CString::new(name).unwrap();
+    unsafe {
+      v8_function_tmpl_set_property_method(self, c_name.as_ptr(), &method)
     }
   }
   pub fn NewInstance(&self) -> Object {

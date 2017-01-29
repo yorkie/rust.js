@@ -15,7 +15,8 @@ env_logger = "0.3.0"
 libc = "0.1.7"
 clap = "*"
 futures = "0.1.6"
-tokio-core = "*"
+tokio-core = "0.1"
+tokio-proto = "0.1"
 
 [[bin]]
 name = "rustjs"

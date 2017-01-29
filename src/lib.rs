@@ -1,5 +1,9 @@
 #![allow(non_snake_case)]
 
+extern crate futures;
+extern crate tokio_core;
+extern crate tokio_proto;
+
 #[macro_use]
 pub mod util;
 pub mod builtin;

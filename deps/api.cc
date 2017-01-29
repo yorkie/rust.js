@@ -490,6 +490,15 @@ Local<Object> v8_object_new() {
 }
 
 /**
+ * get the current isolate
+ * @method v8_object_get_isolate
+ * @return {Object} the returned isolate
+ */
+Isolate* v8_object_get_isolate(Object **object) {
+  return (*object)->GetIsolate();
+}
+
+/**
  * get the value by key from an object
  * @method v8_object_get
  * @param {Object} this
@@ -624,6 +633,16 @@ ReturnValue<Value> v8_function_callback_info_get_return_value(FunctionCallbackIn
 }
 
 /**
+ * get if it is in construct call
+ * @method v8_function_callback_info_is_constructcall
+ * @param {FunctionCallbackInfo} callbackInfo
+ * @return {Boolean} the result
+ */
+bool v8_function_callback_info_is_constructcall(FunctionCallbackInfo<Value> **callbackInfo) {
+  return (*callbackInfo)->IsConstructCall();
+}
+
+/**
  * The ReturnValue class
  * @class ReturnValue
  */
@@ -744,6 +763,33 @@ Local<Function> v8_function_tmpl_get_function(FunctionTemplate **ft) {
  */
 void v8_function_tmpl_set_class_name(FunctionTemplate **ft, char *name) {
   (*ft)->SetClassName(String::NewFromUtf8(isolate, name));
+}
+
+/**
+ * set class name of FunctionTemplate fieldCount
+ * @method v8_function_tmpl_set_internal_fieldcount
+ * @param {FunctionTemplate} this
+ * @param {uint32_t} fieldCount
+ * @return {void}
+ */
+void v8_function_tmpl_set_internal_fieldcount(FunctionTemplate **ft, uint32_t fieldCount) {
+  (*ft)->InstanceTemplate()->SetInternalFieldCount(fieldCount);
+}
+
+/**
+ * set property method
+ * @method v8_function_tmpl_set_property_method
+ * @param {FunctionTemplate} this
+ * @param {char*} name
+ * @param {FunctionCallback*} method
+ * @return {void}
+ */
+void v8_function_tmpl_set_property_method(FunctionTemplate **ft, char *name, FunctionCallback *method) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::Local<v8::FunctionTemplate> t = v8::FunctionTemplate::New(isolate, *method);
+  v8::Local<v8::String> fn_name = v8::String::NewFromUtf8(isolate, name);
+  t->SetClassName(fn_name);
+  (*ft)->PrototypeTemplate()->Set(fn_name, t);
 }
 
 /**

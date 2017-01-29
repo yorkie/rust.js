@@ -78,27 +78,27 @@ extern fn format(info: v8::FunctionCallbackInfo) {
 
   if protocol.IsString() {
     let val = protocol.ToString().as_string();
-    url.set_scheme(&*val);
+    url.set_scheme(&*val).unwrap();
   }
 
   if hostname.IsString() {
     let val = hostname.ToString().as_string();
-    url.set_host(Some(&*val));
+    url.set_host(Some(&*val)).unwrap();
   }
 
   if !port.IsUndefined() {
     let val = port.Int32Value() as u16;
-    url.set_port(Some(val));
+    url.set_port(Some(val)).unwrap();
   }
 
   if username.IsString() {
     let val = username.ToString().as_string();
-    url.set_username(&*val);
+    url.set_username(&*val).unwrap();
   }
 
   if password.IsString() {
     let val = password.ToString().as_string();
-    url.set_password(Some(&*val));
+    url.set_password(Some(&*val)).unwrap();
   }
 
   if pathname.IsString() {

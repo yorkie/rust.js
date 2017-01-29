@@ -18,6 +18,9 @@ futures = "0.1.6"
 tokio-core = "0.1"
 tokio-proto = "0.1"
 
+[dependencies.url]
+git = "https://github.com/servo/rust-url"
+
 [[bin]]
 name = "rustjs"
 test = false

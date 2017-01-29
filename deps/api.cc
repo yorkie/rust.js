@@ -467,6 +467,10 @@ Local<Number> v8_number_new_from_i64(int64_t n) {
  * @class Integer
  */
 
+Local<Boolean> v8_boolean_new(bool val) {
+  return Boolean::New(isolate, val);
+}
+
 /**
  * The Boolean class
  * @class Boolean

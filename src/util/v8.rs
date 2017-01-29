@@ -69,6 +69,7 @@ extern {
   fn v8_number_new_from_i32(n: i32) -> Number;
   fn v8_number_new_from_i64(n: i64) -> Number;
 
+  fn v8_boolean_new(val: bool) -> Boolean;
   fn v8_boolean_value(this: &Boolean) -> bool;
 
   fn v8_object_new() -> Object;
@@ -379,6 +380,9 @@ pub struct Boolean(*mut *mut Boolean);
 value_method!(Boolean);
 
 impl Boolean {
+  pub fn New(val: bool) -> Boolean {
+    unsafe { v8_boolean_new(val) }
+  }
   pub fn Value(&self) -> bool {
     unsafe { v8_boolean_value(self) }
   }

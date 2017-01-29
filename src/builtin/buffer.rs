@@ -18,7 +18,7 @@ struct StringBytes {
 }
 
 impl StringBytes {
-  pub fn new(src: &'static str) -> StringBytes {
+  pub fn new(src: &str) -> StringBytes {
     let mut bytes_string = String::new();
     bytes_string.push_str(src);
     StringBytes {
@@ -43,8 +43,31 @@ impl StringBytes {
     self.source.as_bytes().len()
   }
 
-  extern fn New(arguments: v8::FunctionCallbackInfo) {
-    arguments.GetReturnValue().SetWithBool(true);
+  extern fn New(info: v8::FunctionCallbackInfo) {
+    if info.IsConstructCall() {
+      let arg = info.At(0).ToString().as_string();
+      let obj = StringBytes::new(&*arg);
+      info.GetReturnValue().Set(info.This());
+    }
+  }
+
+  extern fn Encode(info: v8::FunctionCallbackInfo) {
+    // TODO
+    info.GetReturnValue().Set(info.This());
+  }
+
+  extern fn Decode(info: v8::FunctionCallbackInfo) {
+    // TODO
+    info.GetReturnValue().Set(info.This());
+  }
+
+  extern fn Init() -> v8::Function {
+    let tpl = v8::FunctionTemplate::New(StringBytes::New);
+    tpl.SetClassName("StringBytes");
+    tpl.SetInternalFieldCount(1);
+    tpl.SetPropertyMethod("encode", StringBytes::Encode);
+    tpl.SetPropertyMethod("decode", StringBytes::Decode);
+    tpl.GetFunction()
   }
 
 }
@@ -63,7 +86,6 @@ fn it_encodes_to_hex() {
 
 pub fn Init() -> v8::Object {
   let exports = v8::Object::New();
-  exports.Set(v8::String::NewFromUtf8("StringBytes"), 
-    v8::FunctionTemplate::New(StringBytes::New).GetFunction());
+  exports.Set(v8::String::NewFromUtf8("StringBytes"), StringBytes::Init());
   return exports;
 }

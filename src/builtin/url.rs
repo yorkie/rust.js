@@ -1,6 +1,5 @@
 
 use util::v8;
-use util::v8::ValueT;
 use url::Url;
 
 extern fn parse(info: v8::FunctionCallbackInfo) {

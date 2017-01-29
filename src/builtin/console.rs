@@ -27,7 +27,12 @@ extern fn info(arguments: v8::FunctionCallbackInfo) {
 
   let stdout = io::stdout();
   let mut handle = stdout.lock();
-  handle.write_fmt(format_args!("{}\n", msg.as_string()));
+
+  match handle.write_fmt(
+    format_args!("{}\n", msg.as_string())) {
+    Ok(v) => v,
+    Err(err) => println!("{:?}", err),
+  }
 }
 
 extern fn warn(arguments: v8::FunctionCallbackInfo) {
@@ -42,7 +47,11 @@ extern fn warn(arguments: v8::FunctionCallbackInfo) {
 
   let stderr = io::stderr();
   let mut handle = stderr.lock();
-  handle.write_fmt(format_args!("{}\n", msg.as_string()));
+  match handle.write_fmt(
+    format_args!("{}\n", msg.as_string())) {
+    Ok(v) => v,
+    Err(err) => println!("{:?}", err),
+  }
 }
 
 pub fn Init() -> v8::Object {

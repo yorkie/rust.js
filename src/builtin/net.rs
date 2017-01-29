@@ -1,6 +1,6 @@
 
 use util::v8;
-use tokio_proto::TcpClient;
+// use tokio_proto::TcpClient;
 
 struct Socket;
 impl Socket {
@@ -11,9 +11,11 @@ impl Socket {
   }
   extern fn Connect(info: v8::FunctionCallbackInfo) {
     // TODO(Yorkie)
+    info.GetReturnValue().Set(info.This());
   }
   extern fn Disconnect(info: v8::FunctionCallbackInfo) {
     // TODO(Yorkie)
+    info.GetReturnValue().Set(info.This());
   }
   extern fn Init() -> v8::Function {
     let tpl = v8::FunctionTemplate::New(Socket::New);

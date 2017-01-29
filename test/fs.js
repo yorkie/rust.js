@@ -14,3 +14,6 @@ assert(Array.isArray(fs.readdir('./')));
 // // fs.readFile
 var dat = fs.readFile('./makefile');
 assert(typeof dat === 'string');
+
+fs.writeFile('./test/fs_foobar', '123');
+console.log('done');
